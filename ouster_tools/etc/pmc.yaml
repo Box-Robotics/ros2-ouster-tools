@@ -1,0 +1,66 @@
+ouster_tools:
+  pmc_node:
+    ros__parameters:
+      #
+      # The boundary hops value to be specified in the sent PMC messages. This
+      # should be 1 for Ouster LiDARs that are directly connected to this
+      # host. You may need to increase it if there are switches between your PTP
+      # master host (this machine) and the LiDARs.
+      #
+      # Data type: int
+      #
+      boundary_hops: 1
+
+      #
+      # File path prefix for our (client side) Unix Domain Socket
+      # for talking with the ptp4l server. Make sure you have permissions to
+      # write a file (UDS) to this directory. The software will append the
+      # process id (PID) to the end of this string.
+      #
+      # Data type: str
+      #
+      uds_prefix: "/var/tmp/ouster_tools_pmc.sock."
+
+      #
+      # PTP domain number
+      #
+      # Data type: int
+      #
+      domain_number: 0
+
+      #
+      # Timeout in millis to wait for ptp4l server
+      #
+      # Data type: int
+      #
+      poll_timeout: 100
+
+      #
+      # How often to poll the ptp4l server in seconds
+      #
+      # Data type: float
+      #
+      poll_period: 1.0
+
+      #
+      # The list of commands to send to the ptp4l server whose responses will be
+      # published on the ~ptp topic.
+      #
+      # Data type: vector of strings
+      #
+      # As of this writing (10 Apr 2020), implemented commands are:
+      #
+      # GET CLOCK_DESCRIPTION
+      # GET USER_DESCRIPTION
+      # GET DEFAULT_DATA_SET
+      # GET CURRENT_DATA_SET
+      # GET PARENT_DATA_SET
+      # GET TIME_PROPERTIES_DATA_SET
+      # GET TIME_STATUS_NP
+      # GET PORT_DATA_SET
+      #
+      # NOTE: if you need other commands implemented, reach out to the authors
+      # or issue a PR. Added new commands is very straight forward (see:
+      # `pmc_impl.hpp`)
+      #
+      pmc_commands: ["GET CURRENT_DATA_SET", "GET TIME_STATUS_NP"]

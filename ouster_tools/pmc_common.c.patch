@@ -1,0 +1,13 @@
+--- pmc_common.c	2020-04-09 15:08:07.643615373 -0400
++++ pmc_common.c.1	2020-04-09 15:20:12.523898995 -0400
+@@ -653,8 +653,8 @@
+ 		return 0;
+ 	}
+ 
+-	fprintf(stdout, "sending: %s %s\n",
+-		action_string[action], idtab[id].name);
++	/* fprintf(stdout, "sending: %s %s\n",
++		action_string[action], idtab[id].name); */
+ 
+ 	idtab[id].func(pmc, action, id, str);
+ 
