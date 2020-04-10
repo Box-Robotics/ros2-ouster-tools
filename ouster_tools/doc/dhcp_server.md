@@ -52,7 +52,7 @@ interfaces: `enp0s31f6`, `lo`, `wlp3s0` which are my hardwired, local loopback,
 and wireless interfaces respectively. In my dev setup, I plug the Ouster
 directly into my hardwired interface (`enp0s31f6`). If I probe the system to
 list those interfaces dynamically and lexographically sort them, the hardwired
-one will be the first element of that list. So, my hueristic for the default
+one will be the first element of that list. So, my heuristic for the default
 interface will be the first one in that sorted list (and there will always be
 at least one since we have the local loopback). I then take the IP that is
 bound to that interface and make the assumption it is a Class C IPv4 address
@@ -95,39 +95,6 @@ $ ip addr show dev enp0s31f6
        valid_lft forever preferred_lft forever
     inet6 fe80::fe1f:f914:cc92:db5b/64 scope link tentative
        valid_lft forever preferred_lft forever
-```
-
-or
-
-```
-$ ifconfig
-enp0s31f6: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
-        inet 192.168.0.92  netmask 255.255.255.0  broadcast 192.168.0.255
-        inet6 fe80::fe1f:f914:cc92:db5b  prefixlen 64  scopeid 0x20<link>
-        ether e8:6a:64:f4:3c:5b  txqueuelen 1000  (Ethernet)
-        RX packets 565  bytes 59890 (59.8 KB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 1793  bytes 178974 (178.9 KB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device interrupt 16  memory 0xe9200000-e9220000
-
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        inet6 ::1  prefixlen 128  scopeid 0x10<host>
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 2400705  bytes 40176131048 (40.1 GB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 2400705  bytes 40176131048 (40.1 GB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-wlp3s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.86.136  netmask 255.255.255.0  broadcast 192.168.86.255
-        inet6 fe80::9447:d27:b47f:de36  prefixlen 64  scopeid 0x20<link>
-        ether a4:c3:f0:93:bd:d1  txqueuelen 1000  (Ethernet)
-        RX packets 22319401  bytes 26854286293 (26.8 GB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 10557951  bytes 7569423946 (7.5 GB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 ```
 
 Now I can start the dhcp server without having the Ouster powered on and serve
