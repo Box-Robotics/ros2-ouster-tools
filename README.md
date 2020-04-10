@@ -86,9 +86,9 @@ $ colcon build --event-handlers console_cohesion+
 The `pmc_node` provided with this package (for monitoring PTP time sync)
 assumes it is running on a machine that has a `ptp4l` daemon running
 locally. It communicates with `ptp4l` via a Unix Domain Socket (UDS). So, there
-are some permissions related items we need to take care to ensure this will all
-work properly without having to run the ROS node as `root` or (even more of a
-pain) as setuid root.
+are some permissions related items we need to take care of to ensure this will
+all work properly without having to run the ROS node as `root` or (even more of
+a pain) as setuid root.
 
 Stop the `ptp4l` daemon:
 
@@ -96,7 +96,7 @@ Stop the `ptp4l` daemon:
 $ sudo systemctl stop ptp4l.service
 ```
 
-Create a new Linux group called ptp:
+Create a new Linux group called `ptp`:
 
 ```
 $ sudo groupadd -r ptp
@@ -160,6 +160,9 @@ sending: GET TIME_STATUS_NP
 		gmIdentity                 e86a64.fffe.f43c5b
 
 ```
+
+The point here is that you can run `pmc` **without** having to `sudo`.
+
 
 Usage
 =====

@@ -1,5 +1,16 @@
 PTP Tuning
 ==========
+
+This document covers synchronizing the LiDAR clock to your local system time
+over PTP. It also includes some tips on PTP tuning.
+
+[Introduction](#introduction)
+[Validating the PTP Setup](#validating-the-ptp-setup)
+[Tuning the PTP clock sync between the host andLiDAR](#tuning-the-ptp-clock-sync-between-the-host-and-lidar)
+
+
+# Introduction
+
 Modern robotics systems are distributed systems. Each node (computer, sensor,
 actuator, etc.) typically has its own internal clock (sometimes several
 clocks). Synchronizing these distributed clocks is required for proper
