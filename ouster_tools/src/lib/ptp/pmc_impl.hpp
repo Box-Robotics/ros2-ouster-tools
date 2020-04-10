@@ -37,6 +37,8 @@ extern "C"
 #include <linuxptp/print.h>
 }
 
+#define P41 ((double)(1ULL << 41))
+
 using namespace std::chrono_literals;
 
 //-----------------------------

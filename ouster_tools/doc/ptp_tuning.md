@@ -6,7 +6,7 @@ over PTP. It also includes some tips on PTP tuning.
 
 - [Introduction](#introduction)
 - [Validating the PTP Setup](#validating-the-ptp-setup)
-- [Tuning the PTP clock sync between the host andLiDAR](#tuning-the-ptp-clock-sync-between-the-host-and-lidar)
+- [Tuning the PTP clock sync between the host and LiDAR](#tuning-the-ptp-clock-sync-between-the-host-and-lidar)
 
 
 # Introduction
@@ -52,7 +52,7 @@ The remainder of this document will assume a reasonable absolute wall clock
 time on the local Linux host as obtained via NTP. To that end, our focus is on
 tuning the PTP setup between the host and the LiDAR. To be clear, a
 synchronized clock between our host and sensor is critical for running
-algorithms that consume the LiDAR data *assuming good timestamps on the
+algorithms that consume the LiDAR data and *assume good timestamps on the
 point clouds*.
 
 Validating the PTP Setup
@@ -83,7 +83,7 @@ PING 192.168.0.254 (192.168.0.254) 56(84) bytes of data.
 ^C
 ```
 
-Let's also look at our ARP table so we can obtain the OS1-16 physical (MAC)
+Let's also look at our ARP cache so we can obtain the OS1-16 physical (MAC)
 address:
 
 ```
@@ -115,8 +115,12 @@ in our example, they are:
 
 Let's now see how the PTP nodes are configured:
 
+**NOTE:** We are not using `sudo` to run our `pmc` commands. This is because we
+set up our `ptp4l` permissions per the post-installation instructions in our
+[README](../../README.md).
+
 ```
-$ sudo pmc -u -b 1 'GET CURRENT_DATA_SET'
+$ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
 sending: GET CURRENT_DATA_SET
 	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     0
@@ -124,8 +128,8 @@ sending: GET CURRENT_DATA_SET
 		meanPathDelay    0.0
 	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     1
-		offsetFromMaster -193643.0
-		meanPathDelay    25696.0
+		offsetFromMaster -171933.0
+		meanPathDelay    20575.0
 ```
 
 We can see from above that our Linux host `e86a64.fffe.f43c5b-0` is acting as
@@ -134,7 +138,7 @@ the master and the OS1-16 `bc0fa7.fffe.000792-1` is not. As indicated by the
 host) as we expect. Let's get some more information:
 
 ```
-$ sudo pmc -u -b 1 'GET TIME_STATUS_NP'
+$ pmc -u -i /var/tmp/pmc.sock -b 1 'GET TIME_STATUS_NP'
 sending: GET TIME_STATUS_NP
 	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT TIME_STATUS_NP
 		master_offset              0
@@ -146,8 +150,8 @@ sending: GET TIME_STATUS_NP
 		gmPresent                  false
 		gmIdentity                 e86a64.fffe.f43c5b
 	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT TIME_STATUS_NP
-		master_offset              198617
-		ingress_time               1585501273579835870
+		master_offset              -167079
+		ingress_time               1586552465515858167
 		cumulativeScaledRateOffset +0.000000000
 		scaledLastGmPhaseChange    0
 		gmTimeBaseIndicator        0
@@ -165,6 +169,10 @@ is our Linux host. This can be further validated by using the OS1-16 HTTP API.
 
 Validate the OS1-16 is not acting as the grandmaster:
 
+**NOTE:** We use the `jq` commandline tool to process JSON on the command
+line. If you don't have that installed, we highly recommend it: `sudo apt install jq`.
+
+
 ```
 $ curl -s http://192.168.0.254/api/v1/system/time/ptp | jq .port_data_set.port_state
 "SLAVE"
@@ -177,8 +185,10 @@ $ curl -s http://192.168.0.254/api/v1/system/time/ptp | jq .parent_data_set.gran
 "e86a64.fffe.f43c5b"
 ```
 
-We can now conclude that our PTP architecture is setup correctly. We now focus
-on tuning the synchronization of the clocks.
+We can now conclude that our PTP architecture is setup correctly. Our Linux
+host is the acting PTP grandmaster. The Ouster is a PTP slave and acknowledges
+that our Linux host is its PTP master. We now focus on tuning the
+synchronization of the clocks.
 
 
 Tuning the PTP clock sync between the host and LiDAR
@@ -186,7 +196,7 @@ Tuning the PTP clock sync between the host and LiDAR
 Let's get a general sense of how well the two clocks are synchronized:
 
 ```
-$ sudo pmc -u -b 1 'GET CURRENT_DATA_SET'
+$ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
 sending: GET CURRENT_DATA_SET
 	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     0
@@ -194,18 +204,18 @@ sending: GET CURRENT_DATA_SET
 		meanPathDelay    0.0
 	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     1
-		offsetFromMaster 193627.0
-		meanPathDelay    19648.0
+		offsetFromMaster -181840.0
+		meanPathDelay    13955.0
 ```
 
-This shows that the LiDAR time is `193627.0` nanoseconds out-of-sync with the
-Linux host time. That is `0.000193627` seconds which is sub-millisecond but
-represents `193.627` microseconds of estimated error. PTP is advertised to
-achieve `1` microsecond (or better) synchronization, so, our `193.627` seems pretty
+This shows that the LiDAR time is `-181840.0` nanoseconds out-of-sync with the
+Linux host time. That is `-0.00018184` seconds which is sub-millisecond but
+represents `-181.84` microseconds of estimated error. PTP is advertised to
+achieve `1` microsecond (or better) synchronization, so, our `-181.84` seems pretty
 bad. More troubling, it does not seem stable. Let's sample twice:
 
 ```
-$ sudo pmc -u -b 1 'GET CURRENT_DATA_SET'
+$ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
 sending: GET CURRENT_DATA_SET
 	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     0
@@ -213,10 +223,10 @@ sending: GET CURRENT_DATA_SET
 		meanPathDelay    0.0
 	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     1
-		offsetFromMaster -203892.0
-		meanPathDelay    15288.0
+		offsetFromMaster -187200.0
+		meanPathDelay    1230.0
 
-$ sudo pmc -u -b 1 'GET CURRENT_DATA_SET'
+$ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
 sending: GET CURRENT_DATA_SET
 	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     0
@@ -224,10 +234,11 @@ sending: GET CURRENT_DATA_SET
 		meanPathDelay    0.0
 	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT CURRENT_DATA_SET
 		stepsRemoved     1
-		offsetFromMaster 199542.0
-		meanPathDelay    15288.0
+		offsetFromMaster 204000.0
+		meanPathDelay    23529.0
+
 ```
 
-Our first sample shows an offset of `-203892.0` and our second an offset of
-`199542.0`. It feels like we are oscillating around our setpoint of `0`. We
+Our first sample shows an offset of `-187200.0` and our second an offset of
+`204000.0`. It feels like we are oscillating around our setpoint of `0`. We
 need a better way to measure and to understand how our system is behaving.
