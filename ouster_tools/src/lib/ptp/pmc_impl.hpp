@@ -198,19 +198,19 @@ ouster_tools::ptp::pmc::Impl::do_command(const std::string& cmd)
           msg = pmc_recv(this->pmc_);
           if (msg)
             {
-              auto tp = std::chrono::system_clock::now() + 0ns;
-              json_str << "{\"recv_stamp_ns\":\""
-                       << tp.time_since_epoch().count()
-                       << "\",";
-
               if (is_first)
                 {
                   is_first = false;
                 }
               else
                 {
-                  json_str << ", " << std::endl;
+                  json_str << ",";
                 }
+
+              auto tp = std::chrono::system_clock::now() + 0ns;
+              json_str << "{\"recv_stamp_ns\":\""
+                       << tp.time_since_epoch().count()
+                       << "\",";
               json_str << this->to_json(msg);
               msg_put(msg); // decrement msg reference count
 
@@ -373,7 +373,7 @@ ouster_tools::ptp::pmc::Impl::to_json(struct ptp_message *msg)
                << cds->offsetFromMaster / 65536.0f << "\","
                << "\"meanPathDelay\":\""
                << std::fixed << std::setprecision(1)
-               << cds->offsetFromMaster / 65536.0f << "\""
+               << cds->meanPathDelay / 65536.0f << "\""
                << "}";
       break;
 

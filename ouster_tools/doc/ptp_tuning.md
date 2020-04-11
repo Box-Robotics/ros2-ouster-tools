@@ -25,7 +25,9 @@ guide and is now in the tuning phase.
 
 High-level overview of our exemplary clock architecture:
 
-![clock_arch](figures/clock-arch.png)
+![clock_arch](figures/clock-arch-ptp.png)
+
+**NOTE:** Our focus in this document is to tune the PTP link (red).
 
 Referring to the figure above, we have a single Ouster OS1-16 hard-wired
 directly over ethernet into a Linux host running Ubuntu 18.04. The Linux host
@@ -242,3 +244,84 @@ sending: GET CURRENT_DATA_SET
 Our first sample shows an offset of `-187200.0` and our second an offset of
 `204000.0`. It feels like we are oscillating around our setpoint of `0`. We
 need a better way to measure and to understand how our system is behaving.
+
+To collect the data we need for our analysis, we will use the
+[pmc_node](./pmc_node.md). Right now we are only interesting in looking at the
+`offsetFromMaster` and `meanPathDelay` so we will configure the `pmc_node` to
+only send `GET CURRENT_DATA_SET` at 1 Hz. The `pmc_node` is
+configured by editing the [pmc.yaml](../etc/pmc.yaml) file. You'll want to set
+the `pmc_commands` parameter as follows:
+
+```
+pmc_commands: ["GET CURRENT_DATA_SET"]
+```
+
+Assuming you made the above change to the yaml file, you can now start with the
+node with:
+
+```
+$ ros2 launch ouster_tools pmc_managed.launch.py
+```
+
+And you can check that the data are coming across as you expect by capturing
+one message like:
+
+```
+$ ros2 run ouster_tools ptp-dump --pretty -1 2>/dev/null
+[
+  {
+    "GET CURRENT_DATA_SET": {
+      "ptp_msgs": [
+        {
+          "current_data_set": {
+            "meanPathDelay": "0.0",
+            "offsetFromMaster": "0.0",
+            "stepsRemoved": "0"
+          },
+          "ptp_header": {
+            "action": "RESPONSE",
+            "sequenceId": "1",
+            "sourcePortIdentity": "e86a64.fffe.f43c5b-0"
+          },
+          "recv_stamp_ns": "1586610222017950803"
+        },
+        {
+          "current_data_set": {
+            "meanPathDelay": "-9742339.0",
+            "offsetFromMaster": "-8068397568.0",
+            "stepsRemoved": "1"
+          },
+          "ptp_header": {
+            "action": "RESPONSE",
+            "sequenceId": "1",
+            "sourcePortIdentity": "bc0fa7.fffe.000792-1"
+          },
+          "recv_stamp_ns": "1586610222018210687"
+        }
+      ],
+      "send_stamp_ns": "1586610222017560066"
+    }
+  }
+]
+```
+
+We will now use this same `ptp-dump` command to log 5 minutes of data
+to a file that we can use for offline analysis -- we pipe to `tee` so we can
+watch our progress on the screen (optional).
+
+```
+$ timeout -s INT 300s ros2 run ouster_tools ptp-dump 2>/dev/null | tee /tmp/ptp_json_log-00.txt
+[{"GET CURRENT_DATA_SET":{"send_stamp_ns":"1586610947564269927","ptp_msgs":[{"recv_stamp_ns":"1586610947564518608","ptp_header":{"sourcePortIdentity":"e86a64.fffe.f43c5b-0","sequenceId":"11","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"0","offsetFromMaster":"0.0","meanPathDelay":"0.0"}},{"recv_stamp_ns":"1586610947564772636","ptp_header":{"sourcePortIdentity":"bc0fa7.fffe.000792-1","sequenceId":"11","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"1","offsetFromMaster":"26050.0","meanPathDelay":"-2901.0"}}]}}]
+[{"GET CURRENT_DATA_SET":{"send_stamp_ns":"1586610948564207280","ptp_msgs":[{"recv_stamp_ns":"1586610948564571985","ptp_header":{"sourcePortIdentity":"e86a64.fffe.f43c5b-0","sequenceId":"12","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"0","offsetFromMaster":"0.0","meanPathDelay":"0.0"}},{"recv_stamp_ns":"1586610948564788188","ptp_header":{"sourcePortIdentity":"bc0fa7.fffe.000792-1","sequenceId":"12","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"1","offsetFromMaster":"-98994.0","meanPathDelay":"16587.0"}}]}}]
+
+... remainder of output not shown for obvious reasons ...
+```
+
+Using this zero-argument version of `ptp-dump` we get a packed JSON
+representation with the results of a single `poll` on one line. Leveraging
+this, we can validate that we got our data samples at 1 Hz with:
+
+```
+$ cat /tmp/ptp_json_log-00.txt | wc -l
+300
+```

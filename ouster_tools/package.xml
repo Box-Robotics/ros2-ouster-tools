@@ -14,6 +14,8 @@
 
   <depend>lifecycle_msgs</depend>
   <depend>python3</depend>
+  <depend>python3-numpy</depend>
+  <depend>python3-pandas</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>std_msgs</depend>

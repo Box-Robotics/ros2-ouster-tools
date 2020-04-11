@@ -174,6 +174,9 @@ This package provides the following utilities:
   synchronizing and monitoring the synchronization of the LiDAR clock and your
   local system clock. We assume you want to run a PTP master on your local
   machine.
+- [pmc_node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
+  time sync between the Linux host (PTP grandmaster) and the LiDAR (PTP
+  slave).
 
 
 LICENSE
