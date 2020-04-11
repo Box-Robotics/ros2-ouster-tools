@@ -246,7 +246,7 @@ Our first sample shows an offset of `-187200.0` and our second an offset of
 need a better way to measure and to understand how our system is behaving.
 
 To collect the data we need for our analysis, we will use the
-[pmc_node](./pmc_node.md). Right now we are only interesting in looking at the
+[pmc_node](./pmc_node.md). Right now we are only interested in looking at the
 `offsetFromMaster` and `meanPathDelay` so we will configure the `pmc_node` to
 only send `GET CURRENT_DATA_SET` at 1 Hz. The `pmc_node` is
 configured by editing the [pmc.yaml](../etc/pmc.yaml) file. You'll want to set
@@ -256,7 +256,7 @@ the `pmc_commands` parameter as follows:
 pmc_commands: ["GET CURRENT_DATA_SET"]
 ```
 
-Assuming you made the above change to the yaml file, you can now start with the
+Assuming you made the above change to the yaml file, you can now start the
 node with:
 
 ```
@@ -330,3 +330,12 @@ $ cat /tmp/ptp_json_log-00.txt | wc -l
 related to the time it took ROS to discover the publisher before receiving any
 data. The `timeout` command knows nothing about ROS so could not accomodate for
 that. We will live with only 299 samples.
+
+Plotting the `offsetFromMaster` over the entire 5 minute sampling period
+produces the following:
+
+![offset_from_master-00](figures/offset_from_master-00.png)
+
+Our assertion was correct, we are wildly oscillating around the `0`
+setpoint. The notebook used to produce the above plot is available
+[here](./notebooks/offset_from_master.ipynb).
