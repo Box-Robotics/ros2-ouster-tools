@@ -168,15 +168,13 @@ Usage
 =====
 This package provides the following utilities:
 
-- [dhcp-server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
+- [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
   for giving the Ouster its IP address.
-- [PTP time sync tools](ouster_tools/doc/ptp_tuning.md): Tools for
+- [PTP tuning tools](ouster_tools/doc/ptp_tuning.md): Tools for
   synchronizing and monitoring the synchronization of the LiDAR clock and your
-  local system clock. We assume you want to run a PTP master on your local
-  machine.
-- [pmc_node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
-  time sync between the Linux host (PTP grandmaster) and the LiDAR (PTP
-  slave).
+  local system clock.
+- [ROS node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
+  time sync between the Linux host and the LiDAR.
 
 
 LICENSE
