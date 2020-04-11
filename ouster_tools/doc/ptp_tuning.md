@@ -323,5 +323,10 @@ this, we can validate that we got our data samples at 1 Hz with:
 
 ```
 $ cat /tmp/ptp_json_log-00.txt | wc -l
-300
+299
 ```
+
+**NOTE:** We would have expected 300 lines but only got 299. This is likely
+related to the time it took ROS to discover the publisher before receiving any
+data. The `timeout` command knows nothing about ROS so could not accomodate for
+that. We will live with only 299 samples.
