@@ -1,8 +1,8 @@
 PTP Tuning
 ==========
 
-This document covers synchronizing the LiDAR clock to your local system time
-over PTP. It also includes some tips on PTP tuning.
+This document covers synchronizing the LiDAR clock to your local grandmaster
+clock over PTP.
 
 - [Introduction](#introduction)
 - [Validating the PTP Setup](#validating-the-ptp-setup)
