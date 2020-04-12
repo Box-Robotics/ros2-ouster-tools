@@ -339,3 +339,6 @@ produces the following:
 Our assertion was correct, we are wildly oscillating around the `0`
 setpoint. The notebook used to produce the above plot is available
 [here](./notebooks/offset_from_master.ipynb).
+
+TODO: Still investigating how to get this resolved. May need work on Ouster
+side since it is the slave. Stay tuned...
