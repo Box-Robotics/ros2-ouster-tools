@@ -27,6 +27,20 @@ NOTE: The above chart represents what [I](https://github.com/tpanzarella) have
 been able to test and validate. It is likely that this package supports a
 broader mix of hardware and software than is listed above.
 
+
+What's Included?
+================
+This package provides the following utilities:
+
+- [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
+  for giving the Ouster its IP address.
+- [PTP tuning tools](ouster_tools/doc/ptp_tuning.md): Tools for
+  synchronizing and monitoring the synchronization of the LiDAR clock and your
+  local system clock.
+- [ROS node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
+  time sync between the Linux host and the LiDAR.
+
+
 Building and Installing the Software
 ====================================
 
@@ -162,19 +176,6 @@ sending: GET TIME_STATUS_NP
 ```
 
 The point here is that you can run `pmc` **without** having to `sudo`.
-
-
-Usage
-=====
-This package provides the following utilities:
-
-- [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
-  for giving the Ouster its IP address.
-- [PTP tuning tools](ouster_tools/doc/ptp_tuning.md): Tools for
-  synchronizing and monitoring the synchronization of the LiDAR clock and your
-  local system clock.
-- [ROS node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
-  time sync between the Linux host and the LiDAR.
 
 
 LICENSE
