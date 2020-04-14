@@ -25,7 +25,11 @@ guide and is now in the tuning phase.
 
 High-level overview of our exemplary clock architecture:
 
+<center>
+
 ![clock_arch](figures/clock-arch-ptp.png)
+
+</center>
 
 **NOTE:** Our focus in this document is to tune the PTP link (red).
 
