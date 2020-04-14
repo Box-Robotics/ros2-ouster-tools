@@ -23,9 +23,9 @@ Tested Configurations
   </tr>
 </table>
 
-NOTE: The above chart represents what [I](https://github.com/tpanzarella) have
-been able to test and validate. It is likely that this package supports a
-broader mix of hardware and software than is listed above.
+NOTE: It is likely that this package supports a broader mix of hardware and
+software than is listed above. Above is what has been validated by the
+author(s).
 
 
 What's Included?
@@ -37,8 +37,11 @@ This package provides the following utilities:
 - [PTP tuning tools](ouster_tools/doc/ptp_tuning.md): Tools for
   synchronizing and monitoring the synchronization of the LiDAR clock and your
   local system clock.
-- [ROS node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
+- [PMC node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
   time sync between the Linux host and the LiDAR.
+- [Performance analysis tools](ouster_tools/doc/perf.md): Tools and an approach
+  to quantitatively measure the performance of using Ouster LiDARs within
+  ROS2.
 
 
 Building and Installing the Software
