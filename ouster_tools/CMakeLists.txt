@@ -11,7 +11,9 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
+set(PERF_NODE_EXE perf_node)
 set(PMC_NODE_EXE pmc_node)
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 set(PTP_SRC_DIR ${THIRD_PARTY_DIR}/linuxptp)
@@ -125,6 +127,19 @@ ament_target_dependencies(${PMC_NODE_EXE}
   std_msgs
   )
 
+#-----------------------
+# exe: ${PERF_NODE_EXE}
+#-----------------------
+add_executable(${PERF_NODE_EXE} src/bin/perf_node.cpp)
+target_compile_options(${PERF_NODE_EXE}
+  PRIVATE -Wall -Wextra
+  )
+ament_target_dependencies(${PERF_NODE_EXE}
+  rclcpp
+  sensor_msgs
+  )
+
+
 ##############
 ## Install  ##
 ##############
@@ -148,7 +163,9 @@ install(
   )
 
 install(
-  TARGETS ${PMC_NODE_EXE}
+  TARGETS
+    ${PMC_NODE_EXE}
+    ${PERF_NODE_EXE}
   DESTINATION lib/${PROJECT_NAME}
   )
 
