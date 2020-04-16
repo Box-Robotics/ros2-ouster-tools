@@ -44,10 +44,13 @@ this document, we will do our best to articulate our process.
 
 To establish some context, my test setup and assumtions are as follows.
 
-I'm using a Thinkpad T480 and an Ouster OS1-16. They are hard-wired directly
-over Ethernet (no wifi, no switches, etc.) The specs on my laptop are outlined
-in the figure below. In my setup, my computer is at `192.168.0.92` and the
-LiDAR is at `192.168.0.254`.
+I'm using a Thinkpad T480 running Ubuntu 18.04 LTS with the 5.3.x low latency
+Linux kernel. The hardware is 64-bit Quad core i7 hyperthreaded @ 1.9 GHz (8
+virtual cores), 32 GB of RAM, NVIDIA GeForce MX150/PCIe/SSE2 discrete GPU, 1 TB
+SSD.  The LiDAR under test is an Ouster OS1-16. The computer and LiDAR are
+hard-wired directly over Gig Ethernet (no wifi, no switches, etc.) The specs on
+my laptop are outlined in the figure below. In my setup, my computer is at
+`192.168.0.92` and the LiDAR is at `192.168.0.254`.
 
 <div style="text-align:center">
 
