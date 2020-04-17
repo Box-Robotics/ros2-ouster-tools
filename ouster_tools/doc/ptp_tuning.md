@@ -1,12 +1,25 @@
 PTP Tuning
 ==========
 
-This document covers synchronizing the LiDAR clock to your local grandmaster
-clock over PTP.
+This document covers synchronizing the LiDAR clock to your local `ptp4l`
+grandmaster clock using PTP. If you are using an external grandmaster, where
+your local system and the LiDAR are to act as slaves, then this is *not* the
+document for you.
 
 - [Introduction](#introduction)
-- [Validating the PTP Setup](#validating-the-ptp-setup)
-- [Tuning the PTP clock sync between the host and LiDAR](#tuning-the-ptp-clock-sync-between-the-host-and-lidar)
+- [Identifying the HW Addresses](#identifying-the-hw-addresses)
+- [LinuxPTP Daemon Configuration](#linuxptp-daemon-configuration)
+- [Validating the PTP Nodes](#validating-the-ptp-nodes)
+- [Assessing the PTP Time Sync](#assessing-the-ptp-time-sync)
+- [Assessing the System Clock Time Sync](#assessing-the-system-clock-time-sync)
+
+**NOTE:** Throughout this document we use the `jq` commandline tool to process
+JSON on the command line. If you don't have that installed, we highly recommend
+it: `sudo apt install jq`. We now assume you have it.
+
+**NOTE:** We are not using `sudo` to run our `pmc` commands below. This is
+because we set up our `ptp4l` permissions per the post-installation
+instructions in our [README](../../README.md).
 
 
 # Introduction
@@ -61,11 +74,16 @@ synchronized clock between our host and sensor is critical for running
 algorithms that consume the LiDAR data and *assume good timestamps on the
 point clouds*.
 
-Validating the PTP Setup
-========================
-The first thing we need to do before we can tune anything is to validate our
-PTP setup. Our Linux host has a wired ethernet interace `enp0s31f6` with the IP
-address `192.168.0.92/24` bound to it.
+
+Identifying the HW Addresses
+============================
+The first thing we need to do before we can tune anything is to make sure we
+can clearly discriminate between our host and the LiDAR as they will be
+identified in the PTP network. Specifically, they will use the MAC addresses of
+the ethernet adapters. So, let's resolve those.
+
+Our Linux host has a wired ethernet interace `enp0s31f6` with the IP address
+`192.168.0.92/24` bound to it.
 
 ```
 $ ip addr show dev enp0s31f6
@@ -119,11 +137,114 @@ in our example, they are:
   </tr>
 </table>
 
-Let's now see how the PTP nodes are configured:
 
-**NOTE:** We are not using `sudo` to run our `pmc` commands. This is because we
-set up our `ptp4l` permissions per the post-installation instructions in our
-[README](../../README.md).
+LinuxPTP Daemon Configuration
+=============================
+As stated earlier, the Ouster documentation covers the basics of setting up
+`ptp4l` and `phc2sys`. For the sake of brevity, those instructions will not be
+repeated. In this section will review some of the finer points.
+
+The `ptp4l` daemon handles the actual PTP protocol specfics for us. Again, we
+intend for our host to act as the grandmaster. So, we ensure that in our
+`/etc/linuxptp/ptp4l.conf` we have the following parameters set (so it wins the
+election vs the LiDAR to play the role of master):
+
+```
+slaveOnly               0
+priority1               128
+priority2               128
+domainNumber            0
+clockClass              128
+```
+
+We also want to ensure we are using hardware timestamping with:
+
+```
+time_stamping           hardware
+```
+
+At the very bottom of the `ptp4l.conf` file, we list our network
+interface like (so we don't have to list it on the cmd line):
+
+```
+[enp0s31f6]
+```
+
+Finally, the contents of our
+`/etc/systemd/system/ptp4l.service.d/override.conf` file looks like:
+
+```
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/ptp4l -f /etc/linuxptp/ptp4l.conf
+Group=ptp
+```
+
+Now we need to configure `phc2sys`. We want to tell it to take our system clock
+(which obtains an absolute wall clock time via NTP using `chronyd`) and set the
+NIC's PTP time to it and to keep it syncrhonized. To do that, we set the
+contents of our `/etc/systemd/system/phc2sys.service.d/override.conf` file to:
+
+```
+[Service]
+ExecStart=
+ExecStart=/usr/sbin/phc2sys -w -u 60 -s CLOCK_REALTIME -c enp0s31f6
+```
+
+Now you can start both services in the usual way:
+
+```
+$ sudo systemctl daemon-reload
+$ sudo systemctl stop phc2sys.service
+$ sudo systemctl stop ptp4l.service
+$ sudo systemctl start ptp4l.service
+$ sudo systemctl start phc2sys.service
+```
+
+We can inspect our grandmaster settings using `pmc`:
+
+```
+$ pmc -u -i /var/tmp/pmc.sock -b 0 "GET GRANDMASTER_SETTINGS_NP"
+sending: GET GRANDMASTER_SETTINGS_NP
+	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT GRANDMASTER_SETTINGS_NP
+		clockClass              128
+		clockAccuracy           0xfe
+		offsetScaledLogVariance 0xffff
+		currentUtcOffset        36
+		leap61                  0
+		leap59                  0
+		currentUtcOffsetValid   0
+		ptpTimescale            1
+		timeTraceable           0
+		frequencyTraceable      0
+		timeSource              0xa0
+```
+
+There is a problem. The `currentUtcOffset` is set to `36` which is
+incorrect. As of Dec 31, 2016, [an additional leap second was added to the TAI
+to UTC offset](https://en.wikipedia.org/wiki/International_Atomic_Time) so the
+correct setting should be `37`. We can put that in place as well using `pmc`.
+
+```
+$ pmc -u -i /var/tmp/pmc.sock -b 0 "SET GRANDMASTER_SETTINGS_NP clockClass 128 clockAccuracy 0xfe offsetScaledLogVariance 0xffff currentUtcOffset 37 leap61 0 leap59 0 currentUtcOffsetValid 1 ptpTimescale 1 timeTraceable 1 frequencyTraceable 0 timeSource 0xa0"
+sending: SET GRANDMASTER_SETTINGS_NP
+	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT GRANDMASTER_SETTINGS_NP
+		clockClass              128
+		clockAccuracy           0xfe
+		offsetScaledLogVariance 0xffff
+		currentUtcOffset        37
+		leap61                  0
+		leap59                  0
+		currentUtcOffsetValid   1
+		ptpTimescale            1
+		timeTraceable           1
+		frequencyTraceable      0
+		timeSource              0xa0
+```
+
+Validating the PTP Nodes
+========================
+Let's now see how the PTP nodes are configured:
 
 ```
 $ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
@@ -175,10 +296,6 @@ is our Linux host. This can be further validated by using the OS1-16 HTTP API.
 
 Validate the OS1-16 is not acting as the grandmaster:
 
-**NOTE:** We use the `jq` commandline tool to process JSON on the command
-line. If you don't have that installed, we highly recommend it: `sudo apt install jq`.
-
-
 ```
 $ curl -s http://192.168.0.254/api/v1/system/time/ptp | jq .port_data_set.port_state
 "SLAVE"
@@ -196,9 +313,29 @@ host is the acting PTP grandmaster. The Ouster is a PTP slave and acknowledges
 that our Linux host is its PTP master. We now focus on tuning the
 synchronization of the clocks.
 
+Assessing the PTP Time Sync
+===========================
+As a preliminary here, let's make sure the Ouster is using PTP as its
+`timestamp_mode`:
 
-Tuning the PTP clock sync between the host and LiDAR
-====================================================
+```
+$ nc 192.168.0.254 7501
+set_config_param timestamp_mode TIME_FROM_PTP_1588
+set_config_param
+reinitialize
+reinitialize
+write_config_txt
+write_config_txt
+^C
+```
+
+You can validate with:
+
+```
+$ curl -s http://192.168.0.254/api/v1/system/time/ | jq .sensor.timestamp.mode
+"TIME_FROM_PTP_1588"
+```
+
 Let's get a general sense of how well the two clocks are synchronized:
 
 ```
@@ -217,8 +354,9 @@ sending: GET CURRENT_DATA_SET
 This shows that the LiDAR time is `-181840.0` nanoseconds out-of-sync with the
 Linux host time. That is `-0.00018184` seconds which is sub-millisecond but
 represents `-181.84` microseconds of estimated error. PTP is advertised to
-achieve `1` microsecond (or better) synchronization, so, our `-181.84` seems pretty
-bad. More troubling, it does not seem stable. Let's sample twice:
+achieve `1` microsecond (or better) synchronization (the Ouster advertising +/-
+50 usecs), so, our `-181.84` seems pretty bad. More troubling, it does not seem
+stable. Let's sample twice:
 
 ```
 $ pmc -u -i /var/tmp/pmc.sock -b 1 'GET CURRENT_DATA_SET'
@@ -346,3 +484,45 @@ setpoint. The notebook used to produce the above plot is available
 
 TODO: Still investigating how to get this resolved. May need work on Ouster
 side since it is the slave. Stay tuned...
+
+Assessing the System Clock Time Sync
+====================================
+
+In a way similar to above, we want to see how well the Linux system time is
+synchronized to the LiDAR system time. We have automated that with the
+following command:
+
+```
+$ ros2 run ouster_tools sys-time -1 | jq
+{
+  "system_time": "1587149751.906000376",
+  "lidar_time": "1587149751.904213667"
+}
+```
+
+We see they are synchronized to within a couple milliseconds. It is actually
+better than that as there is no latency estimate here in making the http call
+to get the Ouster data. We also note, you can run the `sys-time` script in a
+batch mode as well if you want to log these data over time. For example:
+
+```
+$ ros2 run ouster_tools sys-time --help
+usage: sys-time [-h] [--ip IP] [--hz HZ] [-1]
+
+Compare the local system time to the LiDAR system time
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --ip IP     LiDAR IP address (default: 192.168.0.254)
+  --hz HZ     Frequency to poll timestamps (default: 1)
+  -1, --one   Poll once and exit (default: False)
+
+$ ros2 run ouster_tools sys-time --hz 2
+{"system_time":"1587149800.866159678","lidar_time":"1587149800.864163160"}
+{"system_time":"1587149801.391718388","lidar_time":"1587149801.389585495"}
+{"system_time":"1587149801.916905642","lidar_time":"1587149801.914767981"}
+{"system_time":"1587149802.441340685","lidar_time":"1587149802.439082861"}
+{"system_time":"1587149802.965002298","lidar_time":"1587149802.963232040"}
+{"system_time":"1587149803.489916086","lidar_time":"1587149803.487805128"}
+^C
+```

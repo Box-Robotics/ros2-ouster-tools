@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <chrono>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -64,6 +65,7 @@ public:
     this->declare_parameter("poll_period", 1.0f);
     this->declare_parameter<std::vector<std::string>>(
       "pmc_commands", {"GET CURRENT_DATA_SET", "GET TIME_STATUS_NP"});
+    this->declare_parameter("pmc_config_hook", "");
 
     this->pub_ =
       this->create_publisher<std_msgs::msg::String>(
@@ -91,6 +93,16 @@ public:
         this->get_parameter("uds_prefix").as_string(),
         this->get_parameter("domain_number").get_value<int>(),
         this->get_parameter("poll_timeout").get_value<int>());
+
+    std::string pmc_hook_str =
+      this->get_parameter("pmc_config_hook").get_value<std::string>();
+    if (pmc_hook_str.size() > 0)
+      {
+        RCLCPP_INFO(this->logger_, "Running pmc_config_hook...");
+        RCLCPP_INFO(this->logger_, "%s", pmc_hook_str.c_str());
+        RCLCPP_INFO(this->logger_,
+                    "%s", this->pmc_->poll(pmc_hook_str).c_str());
+      }
 
     RCLCPP_INFO(this->logger_, "Configuration complete.");
     return TC_RETVAL::SUCCESS;

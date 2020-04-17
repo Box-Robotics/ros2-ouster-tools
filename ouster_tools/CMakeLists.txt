@@ -149,6 +149,7 @@ install(
   PROGRAMS
     scripts/dhcp-server
     scripts/ptp-dump
+    scripts/sys-time
   DESTINATION lib/${PROJECT_NAME}/
   )
 

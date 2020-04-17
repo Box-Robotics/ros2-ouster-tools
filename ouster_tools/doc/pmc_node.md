@@ -72,6 +72,15 @@ data for off-line batch processing for tuning the PTP syncing parameters.
     published on the ~ptp topic.
     </td>
   </tr>
+  <tr>
+    <td>~/pmc_config_hook</td>
+    <td>string</td>
+    <td>""</td>
+    <td>
+    A pmc command that can be sent to the PTP network at config time of the
+    node lifecycle FSM.
+    </td>
+  </tr>
 </table>
 
 

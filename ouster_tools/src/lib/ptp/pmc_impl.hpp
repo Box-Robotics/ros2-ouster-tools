@@ -255,7 +255,7 @@ ouster_tools::ptp::pmc::Impl::to_json(struct ptp_message *msg)
   struct parentDS *pds;
   struct timePropertiesDS *tp;
   struct time_status_np *tsn;
-  //struct grandmaster_settings_np *gsn;
+  struct grandmaster_settings_np *gsn;
   struct mgmt_clock_description *cd;
   struct tlv_extra *extra;
   struct portDS *p;
@@ -484,6 +484,36 @@ ouster_tools::ptp::pmc::Impl::to_json(struct ptp_message *msg)
       break;
 
     case TLV_GRANDMASTER_SETTINGS_NP:
+      gsn = (struct grandmaster_settings_np *) mgt->data;
+      json_str << ",\"grandmaster_settings_np\":{"
+               << "\"clockClass\":\""
+               << static_cast<int>(gsn->clockQuality.clockClass) << "\","
+               << "\"clockAccuracy\":\""
+               << std::hex << std::showbase
+               << static_cast<int>(gsn->clockQuality.clockAccuracy) << "\","
+               << "\"offsetScaledLogVariance\":\""
+               << static_cast<int>(gsn->clockQuality.offsetScaledLogVariance)
+               << "\","
+               << std::dec << std::noshowbase
+               << "\"currentUtcOffset\":\""
+               << gsn->utc_offset << "\","
+               << "\"leap61\":\"" << (gsn->time_flags & LEAP_61 ? 1 : 0)
+               << "\","
+               << "\"leap59\":\"" << (gsn->time_flags & LEAP_59 ? 1 : 0)
+               << "\","
+               << "\"currentUtcOffsetValid\":\""
+               << (gsn->time_flags & UTC_OFF_VALID ? 1 : 0) << "\","
+               << "\"ptpTimescale\":\""
+               << (gsn->time_flags & PTP_TIMESCALE ? 1 : 0) << "\","
+               << "\"timeTraceable\":\""
+               << (gsn->time_flags & TIME_TRACEABLE ? 1 : 0) << "\","
+               << "\"frequencyTraceable\":\""
+               << (gsn->time_flags & FREQ_TRACEABLE ? 1 : 0) << "\","
+               << "\"timeSource\":\""
+               << std::hex << std::showbase
+               << static_cast<int>(gsn->time_source) << "\""
+               << std::dec << std::noshowbase
+               << "}";
       break;
 
     case TLV_PORT_DATA_SET:

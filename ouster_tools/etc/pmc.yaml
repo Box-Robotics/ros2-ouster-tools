@@ -58,9 +58,34 @@ ouster_tools:
       # GET TIME_PROPERTIES_DATA_SET
       # GET TIME_STATUS_NP
       # GET PORT_DATA_SET
+      # GET GRANDMASTER_SETTINGS_NP
       #
       # NOTE: if you need other commands implemented, reach out to the authors
       # or issue a PR. Added new commands is very straight forward (see:
       # `pmc_impl.hpp`)
       #
       pmc_commands: ["GET CURRENT_DATA_SET", "GET TIME_STATUS_NP"]
+
+      #
+      # At the `configure` step of the node lifecycle FSM, we run this PMC
+      # command. One way to use it is to set the UTC offset, which, as
+      # of Dec 31, 2016 should be 37 (as of this writing the default ptp4l
+      # shipped on Ubuntu 18.04 LTS, it is 36 -- so, wrong and will cause you
+      # problems when working with the LiDAR). If you don't want to execute
+      # this hook, simply comment out this parameter.
+      #
+      # data type: string
+      #
+      # pmc_config_hook: >-
+      #   SET GRANDMASTER_SETTINGS_NP
+      #   clockClass 128
+      #   clockAccuracy 0xfe
+      #   offsetScaledLogVariance 0xffff
+      #   currentUtcOffset 37
+      #   leap61 0
+      #   leap59 0
+      #   currentUtcOffsetValid 1
+      #   ptpTimescale 1
+      #   timeTraceable 1
+      #   frequencyTraceable 0
+      #   timeSource 0xa0
