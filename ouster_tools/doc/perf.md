@@ -257,6 +257,14 @@ Summary statistics (milliseconds):
   </tr>
 </table>
 
+Looking at the data above, neither signal (jitter on the LiDAR side or jitter
+on the host side) are as clean as we would like to see. However, the LiDAR side
+is much more stable with the most typical jitter being 100 ms +/- 3 ms (this is
+pretty much what we expect when producing data at 10 Hz. However, on the local
+host side and through our ROS2 stack, things look much worse. We should expect
+to see 128 ms +/- 14 ms of jitter on the receiving side of our ROS2
+application.
+
 We now consider the end-to-end latency in the system. The raw measurements are:
 
 <div style="text-align:center">
