@@ -260,7 +260,7 @@ Summary statistics (milliseconds):
 Looking at the data above, neither signal (jitter on the LiDAR side or jitter
 on the host side) are as clean as we would like to see. However, the LiDAR side
 is much more stable with the most typical jitter being 100 ms +/- 3 ms (this is
-pretty much what we expect when producing data at 10 Hz. However, on the local
+pretty much what we expect when producing data at 10 Hz). However, on the local
 host side and through our ROS2 stack, things look much worse. We should expect
 to see 128 ms +/- 14 ms of jitter on the receiving side of our ROS2
 application.
@@ -320,3 +320,168 @@ Summary statistics (milliseconds):
 
 This is concerning. In this configuration, we can expect to see an end-to-end
 latency of 1455 ms +/- 40. Almost 1.5 seconds of end-to-end system latency!!
+
+## Test Case 2
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>512x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+I'm curious to see if the performance issues we see in [Test Case
+1](test-case-1) are as a result of the amount of data we are pushing through
+the system. So, to that end, let's look at exactly the same test but in
+`lidar_mode = 512x10`.
+
+Since our measurement points are the same as in [Test Case 1](test-case-1) I
+will not repeat that graphic here.
+
+The ROS2 driver parameterization is:
+
+```
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 192.168.0.254
+    computer_ip: 192.168.0.92
+    lidar_mode: "512x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_SYS_CLK
+```
+
+I will also not repeat the commands for starting the driver and `perf_node` as
+they are the same.
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test2_raw_jitter](figures/test-case-2_512x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test2_q_jitter](figures/test-case-2_512x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>99.99</td>
+    <td>99.99</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.46</td>
+    <td>0.043</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>100.01</td>
+    <td>99.99</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>4.003</td>
+    <td>0.068</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>81.97</td>
+    <td>99.67</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>118.057</td>
+    <td>100.284</td>
+  </tr>
+</table>
+
+These data are much more stable in terms of jitter. In fact the LiDAR side is
+almost *perfect*. Let's now look at end-to-end latency.
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test2_raw_latency](figures/test-case-2_512x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test2_q_latency](figures/test-case-2_512x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>132.086</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.327</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>131.633</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>2.93</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>115.99</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>141.48</td>
+  </tr>
+</table>
+
+These E2E numbers seem reasonable. We can expect to see e2e latency of about
+132 ms. It does seem like the amount of data we are pushing through the system
+has a direct effect on our stability and latency. Let's dig deeper to
+understand.
+
+To be continued....
