@@ -124,11 +124,13 @@ peformed when I was leading the development of the [ifm3d
 SDK](https://github.com/ifm/ifm3d).
 
 The summary statistic I am most interested in is the median absolute deviation
-(MAD) for any given metric. The MAD gives us *the most typical deviation from
-the most typical latency of X ms will be Y ms* (where X is the median and Y is
-the mad). I also use quantile plots below, which may be unfamiliar for some
-readers. To that end, for the first quantile plot presented, I will explain how
-to read it so the data are understanable.
+(MAD) for any given metric. The MAD gives us the most typical deviation from
+the most typical measurement. For us, we can use it to say: *the most typical
+deviation from the most typical latency of X ms will be Y ms* (where X is the
+median and Y is the mad).
+
+I also use quantile plots below. For clarity in interpreting the data, for the
+first quantile plot presented, I will explain how to read it.
 
 I am using [this notebook](./notebooks/perf.ipynb) to analyze the collected
 data and generate the plots shown below.
