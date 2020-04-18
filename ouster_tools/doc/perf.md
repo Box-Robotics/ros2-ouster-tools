@@ -109,15 +109,44 @@ net.core.rmem_default = 26214400
 To collect data for our analysis, we will use the
 [perf_node](./perf_node.md). The `perf_node` acts as our ROS2
 application. Additionally, we need to run the ROS2 driver as the data source
-for `perf_node`. The configuration of the driver may change from run-to-run in
-this analysis. Before each run, we will always show the parameterization of the
-ROS driver for the given data collection run.
+for `perf_node`.
+
+For this analysis, I am interested in quantifying both jitter and latency. In
+terms of jitter, we look at jitter in when the data are stamped (`msg_stamp`)
+and jitter when data are received (`recv_stamp`). We look at these
+independently. Then we consider end-to-end (e2e) latency (`recv_stamp -
+msg_stamp`). The methods in doing this analysis are inspired by the performance
+analysis described in [this
+whitepaper](http://wiki.zeromq.org/whitepapers:measuring-jitter) by the Zmq
+team and by [this
+work](https://github.com/ifm/ifm3d/blob/master/doc/jitter/jitter.ipynb) that I
+peformed when I was leading the development of the [ifm3d
+SDK](https://github.com/ifm/ifm3d).
+
+The summary statistic I am most interested in is the median absolute deviation
+(MAD) for any given metric. The MAD gives us *the most typical deviation from
+the most typical latency of X ms will be Y ms* (where X is the median and Y is
+the mad). I also use quantile plots below, which may be unfamiliar for some
+readers. To that end, for the first quantile plot presented, I will explain how
+to read it so the data are understanable.
+
+I am using [this notebook](./notebooks/perf.ipynb) to analyze the collected
+data and generate the plots shown below.
 
 ## Test Case 1
 
-In this first test case, I am going to look at both latency and jitter in
-receiving data from the LiDAR into my ROS2 application (in this case,
-`perf_node`). The measurement points in our dataflow model are shown below:
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>2048x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+The measurement points in our dataflow model are:
 
 <div style="text-align:center">
 
@@ -160,5 +189,124 @@ Start the application:
 $ ros2 run ouster_tools perf_node __log_level:=warn --ros-args -p n_samples:=1000
 ```
 
-**NOTE:** Running `perf_node` as we are above, subscribes to the point cloud
-topic `/points`.
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test1_raw_jitter](figures/test-case-1_2048x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test1_q_jitter](figures/test-case-1_2048x10_q_latency.png)
+
+</div>
+
+For clarity on how to read a quantile plot in the context of this analysis, the
+question we want to answer is: What is the worst latency to expect in N% of the
+cases? To do that, you look along the horizontal axis to pick N, then go up the
+vertial axis to get the answer.
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>128.173710</td>
+    <td>100.001024</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>14.007318</td>
+    <td>3.064064</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>108.398984</td>
+    <td>108.114248</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>38.794810</td>
+    <td>52.254586</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>22.503929</td>
+    <td>0.781056</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>275.481479</td>
+    <td>305.468160</td>
+  </tr>
+</table>
+
+We now consider the end-to-end latency in the system. The raw measurements are:
+
+<div style="text-align:center">
+
+![test1_raw_latency](figures/test-case-1_2048x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test1_q_latency](figures/test-case-1_2048x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>1455.071605</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>39.68772</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>1445.436221</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>65.088995</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>1112.398694</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>1588.455797</td>
+  </tr>
+</table>
+
+This is concerning. In this configuration, we can expect to see an end-to-end
+latency of 1455 ms +/- 40. Almost 1.5 seconds of end-to-end system latency!!
