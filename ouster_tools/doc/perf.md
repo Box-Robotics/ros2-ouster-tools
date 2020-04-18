@@ -40,7 +40,7 @@ this document, we will do our best to articulate our process.
 
 # Preliminaries
 
-To establish some context, my test setup and assumtions are as follows.
+To establish some context, my test setup and assumptions are as follows.
 
 I'm using a Thinkpad T480 running Ubuntu 18.04 LTS with the 5.3.x low latency
 Linux kernel.
@@ -147,3 +147,18 @@ ouster_driver:
     use_system_default_qos: False
     timestamp_mode: TIME_FROM_SYS_CLK
 ```
+
+Start the driver:
+
+```
+$ ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
+```
+
+Start the application:
+
+```
+$ ros2 run ouster_tools perf_node __log_level:=warn --ros-args -p n_samples:=1000
+```
+
+**NOTE:** Running `perf_node` as we are above, subscribes to the point cloud
+topic `/points`.
