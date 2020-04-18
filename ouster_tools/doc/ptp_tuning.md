@@ -82,7 +82,7 @@ can clearly discriminate between our host and the LiDAR as they will be
 identified in the PTP network. Specifically, they will use the MAC addresses of
 the ethernet adapters. So, let's resolve those.
 
-Our Linux host has a wired ethernet interace `enp0s31f6` with the IP address
+Our Linux host has a wired ethernet interface `enp0s31f6` with the IP address
 `192.168.0.92/24` bound to it.
 
 ```
@@ -448,8 +448,7 @@ $ ros2 run ouster_tools ptp-dump --pretty -1 2>/dev/null
 ```
 
 We will now use this same `ptp-dump` command to log 5 minutes of data
-to a file that we can use for offline analysis -- we pipe to `tee` so we can
-watch our progress on the screen (optional).
+to a file that we can use for offline analysis (optional).
 
 ```
 $ timeout -s INT 300s ros2 run ouster_tools ptp-dump 2>/dev/null | tee /tmp/ptp_json_log-00.txt
@@ -526,3 +525,11 @@ $ ros2 run ouster_tools sys-time --hz 2
 {"system_time":"1587149803.489916086","lidar_time":"1587149803.487805128"}
 ^C
 ```
+
+A notebook looking at the synchronization of my local system clock to the Ouster system
+clock over a 5 minute period is available
+[here](./notebooks/sysclk.ipynb). Again, these data need to be considered a
+*very rough* estimate as the method to acquire the times have a significant amount of
+latency built in (e.g., making an http request to the LiDAR, then the LiDAR
+needing to sample the time (and other stuff) then package up the results and
+send it back).

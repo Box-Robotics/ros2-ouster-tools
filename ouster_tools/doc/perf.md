@@ -110,8 +110,46 @@ system log, the RMS between my system clock and the PTP time (on the NIC) is
 as the ROS time (in some of our data collection code) will come from the local
 system clock.
 
+Importantly related to `phc2sys`, I have the `currentUtcOffset` correctly set
+to `37` seconds:
+
+```
+$ pmc -u -i /var/tmp/pmc.sock -b 1 "GET GRANDMASTER_SETTINGS_NP"
+sending: GET GRANDMASTER_SETTINGS_NP
+	e86a64.fffe.f43c5b-0 seq 0 RESPONSE MANAGEMENT GRANDMASTER_SETTINGS_NP
+		clockClass              128
+		clockAccuracy           0xfe
+		offsetScaledLogVariance 0xffff
+		currentUtcOffset        37
+		leap61                  0
+		leap59                  0
+		currentUtcOffsetValid   1
+		ptpTimescale            1
+		timeTraceable           1
+		frequencyTraceable      0
+		timeSource              0xa0
+	bc0fa7.fffe.000792-1 seq 0 RESPONSE MANAGEMENT GRANDMASTER_SETTINGS_NP
+		clockClass              255
+		clockAccuracy           0xfe
+		offsetScaledLogVariance 0xffff
+		currentUtcOffset        37
+		leap61                  0
+		leap59                  0
+		currentUtcOffsetValid   0
+		ptpTimescale            1
+		timeTraceable           0
+		frequencyTraceable      0
+		timeSource              0xa0
+```
+
+This is important information we will use later in our analysis as the Ouster
+stamps the data with the PTP time (TAI), so, we need to translate it on our end
+to compare to our local system time (UTC). I will likely add an option to the
+ROS2 driver that will perform a conversion to UTC when in PTP timestamp mode
+(if you want it to).
+
 Finally, since data from the Ouster are sent via UDP unicast, our socket
-receive buffer size is relevant. On my machine they are set to 25 MB
+receive buffer sizes are relevant. On my machine they are set to 25 MB
 (`26214400. / 2**20 -> 25.0`):
 
 ```
@@ -124,8 +162,33 @@ net.core.rmem_default = 26214400
 
 # Analysis
 
+To collect data for our analysis, we will use the
+[perf_node](./perf_node.md). Additionally, we need to run the ROS2 driver. My
+driver configuration for this set of tests is as follows:
+
+```
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 192.168.0.254
+    computer_ip: 192.168.0.92
+    lidar_mode: "2048x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_PTP_1588
+```
+
+To start the ROS driver we run:
+
+```
+$ ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
+```
+
+
+
 - [Jitter Analysis](#jitter-analysis)
 
 ## Jitter Analysis
-
-In progress...

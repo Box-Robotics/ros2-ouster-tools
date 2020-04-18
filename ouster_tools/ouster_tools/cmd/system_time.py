@@ -58,7 +58,8 @@ def main() -> int:
                 print(json.dumps(
                         {"system_time": "{:.9f}".format(sys_time),
                          "lidar_time": "{:.9f}".format(j_resp["realtime"])},
-                      separators=(',', ':')))
+                      separators=(',', ':')),
+                      flush=True)
                 count += 1
 
             if args.one and count > 0:
