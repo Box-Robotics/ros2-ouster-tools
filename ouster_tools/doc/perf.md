@@ -825,3 +825,204 @@ entire scan. So, while the numbers reported in this test case are smaller in
 terms of absolute wall clock time / latency, they indicate that the
 dominant factor in the jitter is the ROS2 middleware and not internal to
 the LiDAR or driver.
+
+## Test Case 5
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+For this test I am duplicating the measurment point setup for Test Case 4 (so
+`TIME_FROM_ROS_RECEPTION`) but we are taking a minimally invasive approach to
+tuning the ROS2 middleware. Specifically, we set some parameters on the Eclipse
+Cyclone DDS. The configuration file we are using looks like:
+
+```
+<?xml version="1.0" encoding="UTF-8" ?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+    <Domain id="any">
+        <General>
+            <NetworkInterfaceAddress>127.0.0.1</NetworkInterfaceAddress>
+            <AllowMulticast>default</AllowMulticast>
+            <MaxMessageSize>65536B</MaxMessageSize>
+            <FragmentSize>32768B</FragmentSize>
+        </General>
+        <Internal>
+            <Watermarks>
+                <WhcHigh>500kB</WhcHigh>
+            </Watermarks>
+        </Internal>
+        <Tracing>
+            <Verbosity>none</Verbosity>
+            <OutputFile>stdout</OutputFile>
+        </Tracing>
+    </Domain>
+</CycloneDDS>
+```
+
+The ROS2 driver parameterization is:
+
+```
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 192.168.0.254
+    computer_ip: 192.168.0.92
+    lidar_mode: "1024x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_ROS_RECEPTION
+```
+
+This time, to start the driver:
+
+```
+$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_tools/etc/cyclonedds.xml ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
+```
+
+To start the `perf_node`:
+
+```
+$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_tools/etc/cyclonedds.xml ros2 run ouster_tools perf_node  --ros-args --log-level WARN -p n_samples:=1000
+```
+
+**NOTE:** Be sure to point to wherever you have the `cyclonedds.xml` stored on
+your filesystem.
+
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test5_raw_jitter](figures/test-case-5_1024x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test5_q_jitter](figures/test-case-5_1024x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>100.102</td>
+    <td>99.99</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>6.436</td>
+    <td>0.075</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>99.987</td>
+    <td>100.001</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>8.009</td>
+    <td>0.138</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>80.368</td>
+    <td>98.923</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>124.105</td>
+    <td>100.774</td>
+  </tr>
+</table>
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test5_raw_latency](figures/test-case-5_1024x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test5_q_latency](figures/test-case-5_1024x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>18.164</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>4.256</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>17.596</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>4.982</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>4.953</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>34.753</td>
+  </tr>
+</table>
+
+We can see that we have made some non-insignificant improvements by tuning the
+middleware like we have in this test case. However, we are still paying the
+cost of serializing the point cloud - traversing the Linux network stack -
+deserializing the point cloud. This is an unnecessary tax that we should not
+have to incur.
+
+The next steps I am going to look at (likely, Test Cases 6 and 7), are to
+implement the driver as a ROS2 component and to see if I can get the
+`rmw_iceoryx_cpp` (and its integration with Cyclone) working. The latter would
+be ideal as we can continue to realize the modularity benefits of running ROS2
+nodes as separate processes *and* the benefits of zero-copy. Both of these
+approaches require some work, so, stay tuned....
