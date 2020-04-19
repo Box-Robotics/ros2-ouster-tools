@@ -632,3 +632,187 @@ Summary statistics (milliseconds):
     <td>147.85</td>
   </tr>
 </table>
+
+## Test Case 4
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+For this next test case, my objective is to see if the instability in the
+system is rooted in the ROS2 Ouster driver or in traversing the ROS2 stack once
+publishing the data from the driver. To get a sense of this, I am going to
+change where I take my measurements by leveraging a feature of the ROS2 Ouster
+driver. Specifically, we are going to stamp the messages with the
+`TIME_FROM_ROS_RECEPTION`. The figure below depicts where on our dataflow
+diagram the measurements will be taken.
+
+<div style="text-align:center">
+
+![data_flow_model_test_cast_4](figures/perf-dataflow-model_test-case-4.png)
+
+</div>
+
+
+Since the LiDAR seemed to operate *perfectly* in the 1024x10 mode, I am going
+to use that `lidar_mode` again for this test. If the data processing between
+the LiDAR and the driver (including inside of the driver implementation) is
+working well, we should see an (almost) identical jitter profile on the
+`msg_stamp` analysis as we did in Test Case 3. Again, my objective in running
+this test is to see if we need to focus our tuning efforts in the driver (and
+how data flow into it) or in the ROS2 stack (once data are published from the
+driver).
+
+The ROS2 driver parameterization is:
+
+```
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 192.168.0.254
+    computer_ip: 192.168.0.92
+    lidar_mode: "1024x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_ROS_RECEPTION
+```
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test4_raw_jitter](figures/test-case-4_1024x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test4_q_jitter](figures/test-case-4_1024x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>101.392</td>
+    <td>100.002</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>13.549</td>
+    <td>0.129</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>99.999</td>
+    <td>100.000</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>15.042</td>
+    <td>0.260</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>71.789</td>
+    <td>97.634</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>132.708</td>
+    <td>102.289</td>
+  </tr>
+</table>
+
+While not *as perfect* as internal to the LiDAR, the publication jitter
+emitting out from the ROS2 driver seems very stable. It is beginning to look
+like the problem is the data flow path between the driver and the application,
+i.e., the ROS2 middleware.
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test4_raw_latency](figures/test-case-4_1024x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test4_q_latency](figures/test-case-4_1024x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>26.965</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>7.145</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>24.620</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>8.555</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>7.990</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>45.079</td>
+  </tr>
+</table>
+
+**NOTE:** In the previous test cases when data were being stamped in the LiDAR,
+it should be noted that the message stamp came from the first column firing in
+the LiDAR. So, roughly 100 ms of the *absolute* E2E latency numbers being
+reported in Test Cases 1 - Test Cases 3 (inclusive) included the latency
+introduced by the actual measurment sweep of the LiDAR. In a separate analysis,
+we will contemplate the times stamped on the points for a single LiDAR
+sweep. The point of this analysis is to look at the jitter. So, while the
+numbers reported in this test case are smaller in terms of absolute wall clock
+time / latency, they seem to indicate that the dominant factor in the jitter is
+still the ROS2 middleware and not internal to the LiDAR or driver.
