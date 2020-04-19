@@ -210,7 +210,7 @@ Here is the quantile plot:
 For clarity on how to read a quantile plot in the context of this analysis, the
 question we want to answer is: What is the worst latency to expect in N% of the
 cases? To do that, you look along the horizontal axis to pick N, then go up the
-vertial axis to get the answer.
+vertical axis to get the answer.
 
 Summary statistics (milliseconds):
 
@@ -479,9 +479,156 @@ Summary statistics (milliseconds):
   </tr>
 </table>
 
-These E2E numbers seem reasonable. We can expect to see e2e latency of about
-132 ms. It does seem like the amount of data we are pushing through the system
-has a direct effect on our stability and latency. Let's dig deeper to
-understand.
+These E2E numbers seem more reasonable (not great). We can expect to see e2e
+latency of about 132 ms. It does seem like the amount of data we are pushing
+through the system has a direct effect on our stability and latency.
 
-To be continued....
+## Test Case 3
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+Since our measurement points are the same as in [Test Case 1](test-case-1) I
+will not repeat that graphic here.
+
+The ROS2 driver parameterization is:
+
+```
+ouster_driver:
+  ros__parameters:
+    lidar_ip: 192.168.0.254
+    computer_ip: 192.168.0.92
+    lidar_mode: "1024x10"
+    imu_port: 7503
+    lidar_port: 7502
+    sensor_frame: laser_sensor_frame
+    laser_frame: laser_data_frame
+    imu_frame: imu_data_frame
+    use_system_default_qos: False
+    timestamp_mode: TIME_FROM_SYS_CLK
+```
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test3_raw_jitter](figures/test-case-3_1024x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test3_q_jitter](figures/test-case-3_1024x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>100.2</td>
+    <td>99.99</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>12.595</td>
+    <td>0.042</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>99.99</td>
+    <td>100.00</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>14.29</td>
+    <td>0.07</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>69.36</td>
+    <td>99.72</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>131.823</td>
+    <td>100.246</td>
+  </tr>
+</table>
+
+Similar to Test Case 2, the LiDAR side is *perfect* while the host/ROS2 side is
+concerning.
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test3_raw_latency](figures/test-case-3_1024x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test3_q_latency](figures/test-case-3_1024x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>131.483</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>7.144</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>130.347</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>8.143</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>114.47</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>147.85</td>
+  </tr>
+</table>
