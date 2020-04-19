@@ -818,9 +818,10 @@ Summary statistics (milliseconds):
 it should be noted that the message stamp came from the first column firing in
 the LiDAR. So, roughly 100 ms of the *absolute* E2E latency numbers being
 reported in Test Cases 1 - Test Cases 3 (inclusive) included the latency
-introduced by the actual measurment sweep of the LiDAR. In a separate analysis,
-we will contemplate the times stamped on the points for a single LiDAR
-sweep. The point of this analysis is to look at the jitter. So, while the
-numbers reported in this test case are smaller in terms of absolute wall clock
-time / latency, they seem to indicate that the dominant factor in the jitter is
-still the ROS2 middleware and not internal to the LiDAR or driver.
+introduced by the actual measurement sweep of the LiDAR. In a separate
+analysis, we will contemplate the times stamped on the points for a single
+LiDAR sweep. The point of this analysis is to look at the jitter related to an
+entire scan. So, while the numbers reported in this test case are smaller in
+terms of absolute wall clock time / latency, they indicate that the
+dominant factor in the jitter is the ROS2 middleware and not internal to
+the LiDAR or driver.
