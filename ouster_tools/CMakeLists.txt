@@ -80,7 +80,7 @@ foreach(PTP_INCDEF in ${PTP_INCDEFS_LIST})
 endforeach()
 
 target_compile_options(linuxptp_pmc
-  PRIVATE -Wall -Wno-address-of-packed-member
+  PRIVATE -Wall -Wno-format-truncation -Wno-address-of-packed-member
   )
 
 #-----------------------

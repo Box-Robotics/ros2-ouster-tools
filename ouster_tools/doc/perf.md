@@ -840,7 +840,7 @@ the LiDAR or driver.
   </tr>
 </table>
 
-For this test I am duplicating the measurment point setup for Test Case 4 (so
+For this test I am duplicating the measurement point setup for Test Case 4 (so
 `TIME_FROM_ROS_RECEPTION`) but we are taking a minimally invasive approach to
 tuning the ROS2 middleware. Specifically, we set some parameters on the Eclipse
 Cyclone DDS. The configuration file we are using looks like:
