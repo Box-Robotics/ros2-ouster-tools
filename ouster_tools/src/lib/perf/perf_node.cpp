@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
 
-#include <rclcpp/rclcpp.hpp>
 #include <ouster_tools/perf/perf_node.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  rclcpp::executors::MultiThreadedExecutor exec;
-  rclcpp::NodeOptions options;
-
-  auto node = std::make_shared<ouster_tools::PerfNode>(options);
-  exec.add_node(node->get_node_base_interface());
-  exec.spin();
-
-  rclcpp::shutdown();
-  return 0;
-}
+RCLCPP_COMPONENTS_REGISTER_NODE(ouster_tools::PerfNode)

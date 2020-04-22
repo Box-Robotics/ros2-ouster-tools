@@ -12,11 +12,13 @@
   <buildtool_depend>ament</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
+  <depend>launch_ros</depend>
   <depend>lifecycle_msgs</depend>
   <depend>python3</depend>
   <depend>python3-numpy</depend>
   <depend>python3-pandas</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>

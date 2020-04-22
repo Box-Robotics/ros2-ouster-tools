@@ -1,0 +1,7 @@
+#
+# parameter file to use with the perf node when run as a component
+#
+mode: jitter
+topic: /points
+out_file: /tmp/perf_node.txt
+n_samples: 1000

@@ -9,6 +9,7 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -36,6 +37,9 @@ if(EXISTS ${PTP_SRC_DIR})
     )
   message(STATUS "PTP_VERSION: ${PTP_VERSION}")
 endif()
+
+# ament index resource
+set(node_plugins "")
 
 #############
 ##  Build  ##
@@ -108,6 +112,38 @@ target_link_libraries(${PROJECT_NAME}_ptp
   )
 
 #-----------------------
+# libouster_tools_perf_component.so
+#-----------------------
+add_library(${PROJECT_NAME}_perf_component SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/perf/perf_node.cpp
+  )
+
+target_include_directories(${PROJECT_NAME}_perf_component
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+
+target_compile_options(${PROJECT_NAME}_perf_component
+  PRIVATE -Wall -Wextra
+  )
+
+ament_target_dependencies(${PROJECT_NAME}_perf_component
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  )
+
+rclcpp_components_register_nodes(
+  ${PROJECT_NAME}_perf_component "ouster_tools::PerfNode"
+  )
+set(node_plugins
+  "${node_plugins}ouster_tools::PerfNode;"
+  )
+set(node_plugins
+  "${node_plugins}$<TARGET_FILE:${PROJECT_NAME}_perf_component>\n"
+  )
+
+#-----------------------
 # exe: ${PMC_NODE_EXE}
 #-----------------------
 add_executable(${PMC_NODE_EXE} src/bin/pmc_node.cpp)
@@ -134,11 +170,13 @@ add_executable(${PERF_NODE_EXE} src/bin/perf_node.cpp)
 target_compile_options(${PERF_NODE_EXE}
   PRIVATE -Wall -Wextra
   )
+target_include_directories(${PERF_NODE_EXE}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
 ament_target_dependencies(${PERF_NODE_EXE}
   rclcpp
   sensor_msgs
   )
-
 
 ##############
 ## Install  ##
@@ -157,6 +195,7 @@ install(
   TARGETS
     linuxptp_pmc
     ${PROJECT_NAME}_ptp
+    ${PROJECT_NAME}_perf_component
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
