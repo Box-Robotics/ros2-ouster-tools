@@ -24,6 +24,8 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    log_level = LaunchConfiguration("log_level")
+
     perf_node_name = "perf_component"
     perf_params = LaunchConfiguration("perf_params")
     perf_share_dir = get_package_share_directory("ouster_tools")
@@ -31,6 +33,15 @@ def generate_launch_description():
     driver_node_name = "ouster_driver"
     driver_params = LaunchConfiguration("driver_params")
     driver_share_dir = get_package_share_directory("ros2_ouster")
+
+    #---------------------------------------
+    # Container args
+    #---------------------------------------
+    log_level_declare = \
+      DeclareLaunchArgument(
+          "log_level", default_value="INFO",
+          description="ROS logging level"
+          )
 
     #---------------------------------------
     # perf_node
@@ -84,11 +95,14 @@ def generate_launch_description():
         package="rclcpp_components",
         node_executable="component_container",
         composable_node_descriptions=[perf_node, driver_node],
+        arguments=[("--ros-args"), ("--log-level"), (log_level)],
         output="screen",
-        emulate_tty="True"
+        emulate_tty=True,
+        log_cmd=True
         )
 
     return LaunchDescription([
+        log_level_declare,
         perf_params_declare,
         driver_params_declare,
         container
