@@ -14,6 +14,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+set(DRIVER_COMPONENT_MGR_EXE driver_component_manager)
 set(PERF_NODE_EXE perf_node)
 set(PMC_NODE_EXE pmc_node)
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
@@ -178,6 +179,24 @@ ament_target_dependencies(${PERF_NODE_EXE}
   sensor_msgs
   )
 
+#---------------------------------
+# exe: ${DRIVER_COMPONENT_MGR_EXE}
+#---------------------------------
+add_executable(${DRIVER_COMPONENT_MGR_EXE}
+  src/bin/driver_component_manager.cpp
+  )
+target_compile_options(${DRIVER_COMPONENT_MGR_EXE}
+  PRIVATE -Wall -Wextra
+  )
+target_include_directories(${DRIVER_COMPONENT_MGR_EXE}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+ament_target_dependencies(${DRIVER_COMPONENT_MGR_EXE}
+  lifecycle_msgs
+  rclcpp
+  rclcpp_lifecycle
+  )
+
 ##############
 ## Install  ##
 ##############
@@ -206,6 +225,7 @@ install(
   TARGETS
     ${PMC_NODE_EXE}
     ${PERF_NODE_EXE}
+    ${DRIVER_COMPONENT_MGR_EXE}
   DESTINATION lib/${PROJECT_NAME}
   )
 

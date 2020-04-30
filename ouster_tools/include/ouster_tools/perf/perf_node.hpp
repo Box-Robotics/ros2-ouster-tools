@@ -20,6 +20,7 @@
 #include <atomic>
 #include <cstdint>
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>

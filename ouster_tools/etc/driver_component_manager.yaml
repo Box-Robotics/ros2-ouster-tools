@@ -1,0 +1,18 @@
+ouster_tools:
+  driver_component_manager:
+    ros__parameters:
+      #
+      # Fully-qualified ROS node name (include namespace) that implements the
+      # Ouster driver as a component. This is the node that this manager is
+      # responsible for driving the FSM.
+      #
+      # data type: string
+      #
+      driver_node: /ouster_driver
+
+      #
+      # Timeout in millis to wait when calling the driver's FSM services
+      #
+      # data type: int
+      #
+      timeout_millis: 1000

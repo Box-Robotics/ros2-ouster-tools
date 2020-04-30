@@ -30,16 +30,23 @@ author(s).
 
 What's Included?
 ================
-This package provides the following utilities:
+
+### Software
 
 - [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
   for giving the Ouster its IP address.
-- [PTP tuning tools](ouster_tools/doc/ptp_tuning.md): Tools for
-  synchronizing and monitoring the synchronization of the LiDAR clock and your
-  local system clock.
 - [PMC node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
   time sync between the Linux host and the LiDAR.
-- [Performance analysis tools](ouster_tools/doc/perf.md): Tools and an approach
+- [Lifecycle Component Manager](ouster_tools/doc/driver_component_manager.md):
+  A lifecycle manager for the LiDAR driver when being run in a component
+  container.
+
+### Supplementary Documentation
+
+- [PTP tuning](ouster_tools/doc/ptp_tuning.md): Tools for synchronizing and
+  monitoring the synchronization of the LiDAR clock and your local system
+  clock.
+- [Performance analysis](ouster_tools/doc/perf.md): Tools and an approach
   to quantitatively measure the performance of using Ouster LiDARs within
   ROS2.
 

@@ -19,20 +19,23 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+    this_package = "ouster_tools"
+    driver_package = "ros2_ouster"
+
     log_level = LaunchConfiguration("log_level")
 
     perf_node_name = "perf_component"
     perf_params = LaunchConfiguration("perf_params")
-    perf_share_dir = get_package_share_directory("ouster_tools")
+    perf_share_dir = get_package_share_directory(this_package)
 
     driver_node_name = "ouster_driver"
     driver_params = LaunchConfiguration("driver_params")
-    driver_share_dir = get_package_share_directory("ros2_ouster")
+    driver_share_dir = get_package_share_directory(driver_package)
 
     #---------------------------------------
     # Container args
@@ -101,9 +104,22 @@ def generate_launch_description():
         log_cmd=True
         )
 
+    #---------------------------------------
+    # lifecycle manager for the driver FSM
+    #---------------------------------------
+
+    driver_mgr = \
+      ExecuteProcess(
+          cmd=['ros2', 'launch', this_package,
+               'driver_component_manager.launch.py'],
+          output="screen",
+          log_cmd=True
+          )
+
     return LaunchDescription([
         log_level_declare,
         perf_params_declare,
         driver_params_declare,
-        container
+        container,
+        driver_mgr
         ])
