@@ -18,7 +18,7 @@ tools. They are:
 - [Test Case 3](#test-case-3): `1024x10`, `TIME_FROM_SYS_CLK`
 - [Test Case 4](#test-case-4): `1024x10`, `TIME_FROM_ROS_RECEPTION`
 - [Test Case 5](#test-case-5): `1024x10`, `TIME_FROM_ROS_RECEPTION`, [cyclonedds.xml](../etc/cyclonedds.xml)
-
+- [Test Case 6](#test-case-6): `1024x10`, `TIME_FROM_ROS_RECEPTION`, Patched driver.
 
 # Introduction
 
