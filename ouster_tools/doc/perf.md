@@ -1021,7 +1021,140 @@ cost of serializing the point cloud - traversing the Linux network stack -
 deserializing the point cloud. This is an unnecessary tax that we should not
 have to incur.
 
-The next steps I am going to look at (likely, Test Cases 6 and 7), are to
+## Test Case 6
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+This test has an identical setup as Test Case 5. The difference is that I have
+patched the ROS2 Ouster driver to eliminate a costly copy of the pointcloud in
+a hot loop. This appears (see data below) to significantly improve jitter. Keep
+in mind, this is still *inter-process* comms. We can still realize quite a few
+optimizations using *intra-process* comms.
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test6_raw_jitter](figures/test-case-6_1024x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test6_q_jitter](figures/test-case-6_1024x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>100.005</td>
+    <td>100.003</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.380</td>
+    <td>0.109</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>100.006</td>
+    <td>99.998</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>2.485</td>
+    <td>0.240</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>83.351</td>
+    <td>96.156</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>118.942</td>
+    <td>103.834</td>
+  </tr>
+</table>
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test6_raw_latency](figures/test-case-6_1024x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test6_q_latency](figures/test-case-6_1024x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>23.706</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.252</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>23.401</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>2.331</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>4.903</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>31.132</td>
+  </tr>
+</table>
+
+The next steps I am going to look at (likely, Test Cases 7 and 8), are to
 implement the driver as a ROS2 component and to see if I can get the
 `rmw_iceoryx_cpp` (and its integration with Cyclone) working. The latter would
 be ideal as we can continue to realize the modularity benefits of running ROS2

@@ -35,7 +35,7 @@
 namespace
 {
   using PCLMsg = sensor_msgs::msg::PointCloud2;
-  using PCLMsgPtr = std::shared_ptr<PCLMsg>;
+  using PCLMsgPtr = std::shared_ptr<const PCLMsg>;
 
   using IMGMsg = sensor_msgs::msg::Image;
   using IMGMsgPtr = std::shared_ptr<IMGMsg>;
