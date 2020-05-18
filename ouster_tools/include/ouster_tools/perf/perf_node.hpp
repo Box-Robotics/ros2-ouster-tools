@@ -28,6 +28,7 @@
 #include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <ouster_tools/visibility_control.h>
@@ -39,6 +40,9 @@ namespace
 
   using IMGMsg = sensor_msgs::msg::Image;
   using IMGMsgPtr = std::shared_ptr<IMGMsg>;
+
+  using ScanMsg = sensor_msgs::msg::LaserScan;
+  using ScanMsgPtr = std::shared_ptr<ScanMsg>;
 }
 
 namespace ouster_tools
@@ -80,6 +84,15 @@ namespace ouster_tools
                   std::bind(&PerfNode::jitter_cb<PCLMsgPtr>, this,
                             std::placeholders::_1));
             }
+          else if (this->topic_ == "/scan")
+            {
+              this->scan_sub_ =
+                this->create_subscription<ScanMsg>(
+                  this->topic_,
+                  rclcpp::SensorDataQoS(),
+                  std::bind(&PerfNode::jitter_cb<ScanMsgPtr>, this,
+                            std::placeholders::_1));
+            }
           else
             {
               RCLCPP_WARN(this->log_,
@@ -95,11 +108,12 @@ namespace ouster_tools
 
   private:
     template<typename T>
-    void jitter_cb(const T msg)
+    void jitter_cb(T msg)
     {
       auto now = this->now().nanoseconds();
       int idx = this->sample_count_.load();
       this->recv_stamp_[idx] = now;
+      //RCLCPP_INFO(this->log_, "%s", __PRETTY_FUNCTION__);
 
       rclcpp::Time msg_time =
         rclcpp::Time(msg->header.stamp.sec, msg->header.stamp.nanosec);
@@ -146,6 +160,7 @@ namespace ouster_tools
     std::vector<std::uint64_t> recv_stamp_;
 
     rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr points_sub_;
+    rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   }; // end: class PerfNode
 
 } // end: namespace ouster_tools
