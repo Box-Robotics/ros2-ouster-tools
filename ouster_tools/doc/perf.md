@@ -19,6 +19,7 @@ tools. They are:
 - [Test Case 4](#test-case-4): `1024x10`, `TIME_FROM_ROS_RECEPTION`
 - [Test Case 5](#test-case-5): `1024x10`, `TIME_FROM_ROS_RECEPTION`, [cyclonedds.xml](../etc/cyclonedds.xml)
 - [Test Case 6](#test-case-6): `1024x10`, `TIME_FROM_ROS_RECEPTION`, Patched driver.
+- [Test Case 7](#test-case-7): `1024x10`, `TIME_FROM_ROS_RECEPTION`, Patched driver, PCL only
 
 # Introduction
 
@@ -1160,3 +1161,135 @@ implement the driver as a ROS2 component and to see if I can get the
 be ideal as we can continue to realize the modularity benefits of running ROS2
 nodes as separate processes *and* the benefits of zero-copy. Both of these
 approaches require some work, so, stay tuned....
+
+## Test Case 7
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+This test has an identical setup as Test Case 6 including the software patch
+from 6. It contains an additional software patch that allows us to selectively
+turn on/off different data processors. In this test case, I am only running the
+point cloud data processor. This is with inter-process comms.
+
+Here is a plot of the raw jitter measurements:
+
+<div style="text-align:center">
+
+![test7_raw_jitter](figures/test-case-7_1024x10_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test6_q_jitter](figures/test-case-7_1024x10_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>100.000</td>
+    <td>100.000</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.244</td>
+    <td>0.060</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>100.001</td>
+    <td>100.000</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>1.425</td>
+    <td>0.281</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>92.738</td>
+    <td>94.991</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>107.489</td>
+    <td>105.159</td>
+  </tr>
+</table>
+
+Raw E2E jitter:
+
+<div style="text-align:center">
+
+![test7_raw_latency](figures/test-case-7_1024x10_e2e_raw_latency.png)
+
+</div>
+
+Here is the quantile plot:
+
+<div style="text-align:center">
+
+![test7_q_latency](figures/test-case-7_1024x10_e2e_q_latency.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>10.319</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.183</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>10.315</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>1.182</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>2.403</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>18.865</td>
+  </tr>
+</table>
