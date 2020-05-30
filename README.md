@@ -75,6 +75,13 @@ docs on syncing the LiDAR to your system time) you will need the following:
 $ sudo apt install linuxptp chrony ethtool
 ```
 
+#### HDF5 Support
+
+Currently to build this poject, you will also need to have
+[h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge) installed. This
+requirement may go away if/when we modularize this project a bit more. For now,
+be sure to make `h5_bridge` available to your ROS2 installation.
+
 #### Cloning the sources
 
 To clone this repository, please use the following command -- there is a
