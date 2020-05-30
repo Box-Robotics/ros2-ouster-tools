@@ -14,6 +14,8 @@
 
   <depend>launch_ros</depend>
   <depend>lifecycle_msgs</depend>
+  <depend>h5_bridge</depend>
+  <depend>h5b_sensor_msgs</depend>
   <depend>python3</depend>
   <depend>python3-numpy</depend>
   <depend>python3-pandas</depend>

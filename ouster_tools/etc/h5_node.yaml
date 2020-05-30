@@ -1,0 +1,5 @@
+#
+# parameter file for the h5_node
+#
+h5_outfile: /tmp/h5_node.h
+h5_root_group: /os1-16
