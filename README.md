@@ -77,7 +77,7 @@ $ sudo apt install linuxptp chrony ethtool
 
 #### HDF5 Support
 
-Currently to build this poject, you will also need to have
+Currently to build this project, you will also need to have
 [h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge) installed. This
 requirement may go away if/when we modularize this project a bit more. For now,
 be sure to make `h5_bridge` available to your ROS2 installation.
