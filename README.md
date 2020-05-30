@@ -27,6 +27,9 @@ NOTE: It is likely that this package supports a broader mix of hardware and
 software than is listed above. Above is what has been validated by the
 author(s).
 
+NOTE2: This is currently research-grade code. We will bump to an official
+release number once the code is stable for production use.
+
 
 What's Included?
 ================
@@ -34,12 +37,14 @@ What's Included?
 ### Software
 
 - [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
-  for giving the Ouster its IP address.
+  for giving the Ouster its IP address -- stable.
 - [PMC node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
-  time sync between the Linux host and the LiDAR.
+  time sync between the Linux host and the LiDAR -- stable.
 - [Lifecycle Component Manager](ouster_tools/doc/driver_component_manager.md):
   A lifecycle manager for the LiDAR driver when being run in a component
-  container.
+  container -- still under development.
+- [HDF5 Recorder](ouster_tools/doc/h5.md): A node to record Ouster topics to
+  H5 -- still under development.
 
 ### Supplementary Documentation
 
