@@ -23,14 +23,6 @@ tools. They are:
 
 # Introduction
 
-At [Box Robotics](http://boxrobotics.ai), we are rebuilding the AGV perception
-stack in HD (see our website to understand what that means). To do this, we
-believe long-range 3D LiDAR, like those produced by Ouster, are a critical
-enabling technology. The application of this technology extends beyond what we
-are doing at Box Robotics. 3D LiDAR generalizes to almost all autonomous mobile
-robotics systems. The performance analysis work presented herein will be of
-particular interest to those working on *higher-speed* mobile robots.
-
 The ROS2 stack for interfacing with Ouster LiDARs is *deep*. To that end, for
 our purposes we will create a simplified model of the various layers in this
 stack. Our model is shown in the block diagram below.
