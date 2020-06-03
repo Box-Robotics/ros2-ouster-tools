@@ -21,7 +21,7 @@ import os
 import shutil
 import sys
 
-from ouster_tools.net import get_network_interfaces
+from ouster_dhcp import get_network_interfaces
 
 DHCPD = 'dnsmasq'
 

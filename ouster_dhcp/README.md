@@ -1,11 +1,11 @@
-dhcp-server
+ouster_dhcp
 ===========
+
 This package provides a wrapper around `dnsmasq` for allocating an IP address to
 the Ouster LiDAR. To run the dhcp server:
 
 ```
-[ ~/colcon/ros2_ouster_tools ]
-tpanzarella@jelly $ ros2 run ouster_tools dhcp-server
+$ ros2 run ouster_dhcp dhcp-server
 sudo /usr/sbin/dnsmasq -C /dev/null -kd -F192.168.0.254,192.168.0.254 -i enp0s31f6 --bind-dynamic
 dnsmasq: started, version 2.79 cachesize 150
 dnsmasq: compile time options: IPv6 GNU-getopt DBus i18n IDN DHCP DHCPv6 no-Lua TFTP conntrack ipset auth DNSSEC loop-detect inotify
@@ -27,8 +27,7 @@ The command above is run using the default arguments and expected outputs are
 shown. The help message for the program showing its arguments looks like:
 
 ```
-[ ~/colcon/ros2_ouster_tools ]
-tpanzarella@jelly $ ros2 run ouster_tools dhcp-server --help
+$ ros2 run ouster_dhcp dhcp-server --help
 usage: dhcp-server [-h] [-i IFACE] [--min-ip MIN_IP] [--max-ip MAX_IP]
 
 Runs a local dhcp server using dnsmasq
@@ -101,7 +100,7 @@ Now I can start the dhcp server without having the Ouster powered on and serve
 addresses correctly:
 
 ```
-$ ros2 run ouster_tools dhcp-server
+$ ros2 run ouster_dhcp dhcp-server
 sudo /usr/sbin/dnsmasq -C /dev/null -kd -F192.168.0.254,192.168.0.254 -i enp0s31f6 --bind-dynamic
 [sudo] password for tpanzarella:
 dnsmasq: started, version 2.79 cachesize 150

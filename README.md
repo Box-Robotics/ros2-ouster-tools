@@ -33,7 +33,7 @@ What's Included?
 
 ### Software
 
-- [DHCP Server](ouster_tools/doc/dhcp_server.md): A wrapper around `dnsmasq`
+- [DHCP Server](ouster_dhcp/README.md): A wrapper around `dnsmasq`
   for giving the Ouster its IP address -- stable.
 - [PMC node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
   time sync between the Linux host and the LiDAR -- stable.

@@ -13,8 +13,6 @@
 # limitations under the License.
 #
 
-"""Network utilities for working with Ouster LiDARs."""
-
 import array
 import fcntl
 import socket

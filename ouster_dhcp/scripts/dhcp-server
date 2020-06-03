@@ -2,7 +2,7 @@
 # -*- python -*-
 
 import sys
-from ouster_tools.cmd import dhcp_server
+from ouster_dhcp.cmd import dhcp_server
 
 if __name__ == '__main__':
     sys.exit(dhcp_server.main())
