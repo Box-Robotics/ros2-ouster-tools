@@ -15,7 +15,7 @@ Tested Configurations
     <th>Ouster Firmware</th>
   </tr>
   <tr>
-    <td>0.0.0</td>
+    <td>0.1.0</td>
     <td>Ubuntu 18.04</td>
     <td>Eloquent</td>
     <td>OS1-16</td>
@@ -26,9 +26,6 @@ Tested Configurations
 NOTE: It is likely that this package supports a broader mix of hardware and
 software than is listed above. Above is what has been validated by the
 author(s).
-
-NOTE2: This is currently research-grade code. We will bump to an official
-release number once the code is stable for production use.
 
 
 What's Included?
