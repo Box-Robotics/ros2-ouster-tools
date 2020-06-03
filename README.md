@@ -40,7 +40,7 @@ What's Included?
 - [Lifecycle Component Manager](ouster_tools/doc/driver_component_manager.md):
   A lifecycle manager for the LiDAR driver when being run in a component
   container -- still under development.
-- [HDF5 Recorder](ouster_h5/doc/h5_node.md): A node to record Ouster topics to
+- [HDF5 Recorder](ouster_h5/README.md): A node to record Ouster topics to
   H5 -- still under development.
 
 ### Supplementary Documentation
