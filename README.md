@@ -43,7 +43,7 @@ What's Included?
 - [Lifecycle Component Manager](ouster_tools/doc/driver_component_manager.md):
   A lifecycle manager for the LiDAR driver when being run in a component
   container -- still under development.
-- [HDF5 Recorder](ouster_tools/doc/h5.md): A node to record Ouster topics to
+- [HDF5 Recorder](ouster_h5/doc/h5_node.md): A node to record Ouster topics to
   H5 -- still under development.
 
 ### Supplementary Documentation
@@ -77,10 +77,11 @@ $ sudo apt install linuxptp chrony ethtool
 
 #### HDF5 Support
 
-Currently to build this project, you will also need to have
-[h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge) installed. This
-requirement may go away if/when we modularize this project a bit more. For now,
-be sure to make `h5_bridge` available to your ROS2 installation.
+If you wish to use the HDF5 recording capabilities of this toolbox, you will
+need to first install
+[h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge). If you would
+rather not use the `ouster_h5` package, you can use the `COLCON_IGNORE`
+approach to skip building that package.
 
 #### Cloning the sources
 

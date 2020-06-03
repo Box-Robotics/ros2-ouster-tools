@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__H5_H5_NODE_H_
-#define OUSTER_TOOLS__H5_H5_NODE_H_
+#ifndef OUSTER_H5__H5_NODE_H_
+#define OUSTER_H5__H5_NODE_H_
 
 #include <memory>
 #include <mutex>
@@ -28,7 +28,7 @@
 #include <h5_bridge.hpp>
 #include <h5b_sensor_msgs.hpp>
 
-#include <ouster_tools/visibility_control.h>
+#include <ouster_h5/visibility_control.h>
 
 namespace
 {
@@ -39,12 +39,12 @@ namespace
   using IMGMsgPtr = std::shared_ptr<IMGMsg>;
 }
 
-namespace ouster_tools
+namespace ouster_h5
 {
   class H5Node : public rclcpp::Node
   {
   public:
-    OUSTER_TOOLS_PUBLIC
+    OUSTER_H5_PUBLIC
     explicit H5Node(const rclcpp::NodeOptions& opts)
       : Node("h5_node", opts),
         log_(this->get_logger())
@@ -121,6 +121,6 @@ namespace ouster_tools
 
   }; // end: class H5Node
 
-} // end: namespace ouster_tools
+} // end: namespace ouster_h5
 
-#endif // OUSTER_TOOLS__H5_H5_NODE_H_
+#endif // OUSTER_H5__H5_NODE_H_

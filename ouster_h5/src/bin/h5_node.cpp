@@ -16,7 +16,7 @@
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
-#include <ouster_tools/h5/h5_node.hpp>
+#include <ouster_h5/h5_node.hpp>
 
 int main(int argc, char ** argv)
 {
@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
   rclcpp::executors::MultiThreadedExecutor exec;
   rclcpp::NodeOptions options;
 
-  auto node = std::make_shared<ouster_tools::H5Node>(options);
+  auto node = std::make_shared<ouster_h5::H5Node>(options);
   exec.add_node(node->get_node_base_interface());
   exec.spin();
 

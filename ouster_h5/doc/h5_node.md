@@ -1,9 +1,5 @@
 h5_node
 =======
-
-**NOTE:** This node is currently facilitating some active performance research
-and analysis. It should not be relied upon for any production work.
-
 The `h5_node` is used to record data published from the Ouster driver to an
 HDF5 file. It is still under active development in terms of its public
 interface.

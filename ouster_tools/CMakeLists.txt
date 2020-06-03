@@ -8,8 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
-find_package(h5_bridge REQUIRED)
-find_package(h5b_sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
@@ -19,7 +17,6 @@ find_package(sensor_msgs REQUIRED)
 set(DRIVER_COMPONENT_MGR_EXE driver_component_manager)
 set(PERF_NODE_EXE perf_node)
 set(PMC_NODE_EXE pmc_node)
-set(H5_NODE_EXE h5_node)
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 set(PTP_SRC_DIR ${THIRD_PARTY_DIR}/linuxptp)
 
@@ -200,23 +197,6 @@ ament_target_dependencies(${DRIVER_COMPONENT_MGR_EXE}
   rclcpp_lifecycle
   )
 
-#-----------------------
-# exe: ${H5_NODE_EXE}
-#-----------------------
-add_executable(${H5_NODE_EXE} src/bin/h5_node.cpp)
-target_compile_options(${H5_NODE_EXE}
-  PRIVATE -Wall -Wextra
-  )
-target_include_directories(${H5_NODE_EXE}
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-ament_target_dependencies(${H5_NODE_EXE}
-  rclcpp
-  sensor_msgs
-  h5_bridge
-  h5b_sensor_msgs
-  )
-
 ##############
 ## Install  ##
 ##############
@@ -246,7 +226,6 @@ install(
     ${PMC_NODE_EXE}
     ${PERF_NODE_EXE}
     ${DRIVER_COMPONENT_MGR_EXE}
-    ${H5_NODE_EXE}
   DESTINATION lib/${PROJECT_NAME}
   )
 
