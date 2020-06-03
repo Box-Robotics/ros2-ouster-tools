@@ -1,8 +1,8 @@
-h5_node
-=======
-The `h5_node` is used to record data published from the Ouster driver to an
-HDF5 file. It is still under active development in terms of its public
-interface.
+ouster_h5
+=========
+This package provides the `h5_node`. It is used to record data published from
+the Ouster driver to an HDF5 file. It is still under active development in
+terms of its public interface.
 
 ### Parameters
 
@@ -50,13 +50,13 @@ interface.
   </tr>
 </table>
 
-### Publish topics
+### Published topics
 
 None.
 
 ### Subscribed topics
 
-This node subscribes to the topic named in the paraemeters listed above.
+This node subscribes to the topic names in the paraemeters listed above.
 
 ### Advertised services
 
