@@ -1,9 +1,9 @@
-Performance Analysis
-====================
+Ouster LiDAR Performance in ROS2
+================================
 
-This document attempts to help quantify the performance of using Ouster LiDARs
-within ROS2. We have several objectives in developing this framework and set of
-tools. They are:
+This package provides an evolving set of tools to help quantify the performance
+of using Ouster LiDARs within ROS2. We have several objectives in developing
+this framework and set of tools. They are:
 
 1. To quantitatively understand the performance characteristics that can be
    expected when using Ouster LiDARs in ROS2
@@ -17,7 +17,7 @@ tools. They are:
 - [Test Case 2](#test-case-2): `512x10`, `TIME_FROM_SYS_CLK`
 - [Test Case 3](#test-case-3): `1024x10`, `TIME_FROM_SYS_CLK`
 - [Test Case 4](#test-case-4): `1024x10`, `TIME_FROM_ROS_RECEPTION`
-- [Test Case 5](#test-case-5): `1024x10`, `TIME_FROM_ROS_RECEPTION`, [cyclonedds.xml](../etc/cyclonedds.xml)
+- [Test Case 5](#test-case-5): `1024x10`, `TIME_FROM_ROS_RECEPTION`, [cyclonedds.xml](./etc/cyclonedds.xml)
 - [Test Case 6](#test-case-6): `1024x10`, `TIME_FROM_ROS_RECEPTION`, Patched driver.
 - [Test Case 7](#test-case-7): `1024x10`, `TIME_FROM_ROS_RECEPTION`, Patched driver, PCL only
 
@@ -29,7 +29,7 @@ stack. Our model is shown in the block diagram below.
 
 <div style="text-align:center">
 
-![data_flow_model](figures/perf-dataflow-model.png)
+![data_flow_model](./doc/figures/perf-dataflow-model.png)
 
 </div>
 
@@ -61,7 +61,7 @@ my laptop are outlined in the figure below. In my setup, my computer is at
 
 <div style="text-align:center">
 
-![laptop_arch](figures/laptop-lidar-arch.png)
+![laptop_arch](./doc/figures/laptop-lidar-arch.png)
 
 </div>
 
@@ -87,11 +87,11 @@ package.
 
 Since much of the analysis shown below relies upon consistent timing, my
 computer and the LiDAR are time-synchronized using PTP as described
-[here](../../ouster_ptp/). You can see the type of clock sync performance I am
+[here](../ouster_ptp/). You can see the type of clock sync performance I am
 getting by looking at a set of representative notebooks. My PTP performance is
-shown [here](../../ouster_ptp/doc/notebooks/offset_from_master.ipynb) and the
+shown [here](../ouster_ptp/doc/notebooks/offset_from_master.ipynb) and the
 system clock sync performance is shown
-[here](../../ouster_ptp/doc/notebooks/sysclk.ipynb). I'll assert that the
+[here](../ouster_ptp/doc/notebooks/sysclk.ipynb). I'll assert that the
 system clock between the LiDAR and my computer are sub-millisecond and at worst
 single-digit millisecond synchronized.
 
@@ -110,7 +110,7 @@ net.core.rmem_default = 26214400
 # Analysis
 
 To collect data for our analysis, we will use the
-[perf_node](../include/ouster_perf/perf_node.hpp). The `perf_node` acts as our
+[perf_node](./include/ouster_perf/perf_node.hpp). The `perf_node` acts as our
 ROS2 application. Additionally, we need to run the ROS2 driver as the data
 source for `perf_node`.
 
@@ -135,7 +135,7 @@ median and Y is the mad).
 I also use quantile plots below. For clarity in interpreting the data, for the
 first quantile plot presented, I will explain how to read it.
 
-I am using [this notebook](./notebooks/perf.ipynb) to analyze the collected
+I am using [this notebook](./doc/notebooks/perf.ipynb) to analyze the collected
 data and generate the plots shown below.
 
 ## Test Case 1
@@ -155,7 +155,7 @@ The measurement points in our dataflow model are:
 
 <div style="text-align:center">
 
-![data_flow_model_test_cast_1](figures/perf-dataflow-model_test-case-1.png)
+![data_flow_model_test_cast_1](./doc/figures/perf-dataflow-model_test-case-1.png)
 
 </div>
 
@@ -198,7 +198,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test1_raw_jitter](figures/test-case-1_2048x10_raw_latency.png)
+![test1_raw_jitter](./doc/figures/test-case-1_2048x10_raw_latency.png)
 
 </div>
 
@@ -206,7 +206,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test1_q_jitter](figures/test-case-1_2048x10_q_latency.png)
+![test1_q_jitter](./doc/figures/test-case-1_2048x10_q_latency.png)
 
 </div>
 
@@ -272,7 +272,7 @@ We now consider the end-to-end latency in the system. The raw measurements are:
 
 <div style="text-align:center">
 
-![test1_raw_latency](figures/test-case-1_2048x10_e2e_raw_latency.png)
+![test1_raw_latency](./doc/figures/test-case-1_2048x10_e2e_raw_latency.png)
 
 </div>
 
@@ -280,7 +280,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test1_q_latency](figures/test-case-1_2048x10_e2e_q_latency.png)
+![test1_q_latency](./doc/figures/test-case-1_2048x10_e2e_q_latency.png)
 
 </div>
 
@@ -369,7 +369,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test2_raw_jitter](figures/test-case-2_512x10_raw_latency.png)
+![test2_raw_jitter](./doc/figures/test-case-2_512x10_raw_latency.png)
 
 </div>
 
@@ -377,7 +377,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test2_q_jitter](figures/test-case-2_512x10_q_latency.png)
+![test2_q_jitter](./doc/figures/test-case-2_512x10_q_latency.png)
 
 </div>
 
@@ -433,7 +433,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test2_raw_latency](figures/test-case-2_512x10_e2e_raw_latency.png)
+![test2_raw_latency](./doc/figures/test-case-2_512x10_e2e_raw_latency.png)
 
 </div>
 
@@ -441,7 +441,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test2_q_latency](figures/test-case-2_512x10_e2e_q_latency.png)
+![test2_q_latency](./doc/figures/test-case-2_512x10_e2e_q_latency.png)
 
 </div>
 
@@ -523,7 +523,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test3_raw_jitter](figures/test-case-3_1024x10_raw_latency.png)
+![test3_raw_jitter](./doc/figures/test-case-3_1024x10_raw_latency.png)
 
 </div>
 
@@ -531,7 +531,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test3_q_jitter](figures/test-case-3_1024x10_q_latency.png)
+![test3_q_jitter](./doc/figures/test-case-3_1024x10_q_latency.png)
 
 </div>
 
@@ -587,7 +587,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test3_raw_latency](figures/test-case-3_1024x10_e2e_raw_latency.png)
+![test3_raw_latency](./doc/figures/test-case-3_1024x10_e2e_raw_latency.png)
 
 </div>
 
@@ -595,7 +595,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test3_q_latency](figures/test-case-3_1024x10_e2e_q_latency.png)
+![test3_q_latency](./doc/figures/test-case-3_1024x10_e2e_q_latency.png)
 
 </div>
 
@@ -659,7 +659,7 @@ diagram the measurements will be taken.
 
 <div style="text-align:center">
 
-![data_flow_model_test_cast_4](figures/perf-dataflow-model_test-case-4.png)
+![data_flow_model_test_cast_4](./doc/figures/perf-dataflow-model_test-case-4.png)
 
 </div>
 
@@ -694,7 +694,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test4_raw_jitter](figures/test-case-4_1024x10_raw_latency.png)
+![test4_raw_jitter](./doc/figures/test-case-4_1024x10_raw_latency.png)
 
 </div>
 
@@ -702,7 +702,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test4_q_jitter](figures/test-case-4_1024x10_q_latency.png)
+![test4_q_jitter](./doc/figures/test-case-4_1024x10_q_latency.png)
 
 </div>
 
@@ -760,7 +760,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test4_raw_latency](figures/test-case-4_1024x10_e2e_raw_latency.png)
+![test4_raw_latency](./doc/figures/test-case-4_1024x10_e2e_raw_latency.png)
 
 </div>
 
@@ -768,7 +768,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test4_q_latency](figures/test-case-4_1024x10_e2e_q_latency.png)
+![test4_q_latency](./doc/figures/test-case-4_1024x10_e2e_q_latency.png)
 
 </div>
 
@@ -899,7 +899,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test5_raw_jitter](figures/test-case-5_1024x10_raw_latency.png)
+![test5_raw_jitter](./doc/figures/test-case-5_1024x10_raw_latency.png)
 
 </div>
 
@@ -907,7 +907,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test5_q_jitter](figures/test-case-5_1024x10_q_latency.png)
+![test5_q_jitter](./doc/figures/test-case-5_1024x10_q_latency.png)
 
 </div>
 
@@ -960,7 +960,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test5_raw_latency](figures/test-case-5_1024x10_e2e_raw_latency.png)
+![test5_raw_latency](./doc/figures/test-case-5_1024x10_e2e_raw_latency.png)
 
 </div>
 
@@ -968,7 +968,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test5_q_latency](figures/test-case-5_1024x10_e2e_q_latency.png)
+![test5_q_latency](./doc/figures/test-case-5_1024x10_e2e_q_latency.png)
 
 </div>
 
@@ -1038,7 +1038,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test6_raw_jitter](figures/test-case-6_1024x10_raw_latency.png)
+![test6_raw_jitter](./doc/figures/test-case-6_1024x10_raw_latency.png)
 
 </div>
 
@@ -1046,7 +1046,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test6_q_jitter](figures/test-case-6_1024x10_q_latency.png)
+![test6_q_jitter](./doc/figures/test-case-6_1024x10_q_latency.png)
 
 </div>
 
@@ -1099,7 +1099,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test6_raw_latency](figures/test-case-6_1024x10_e2e_raw_latency.png)
+![test6_raw_latency](./doc/figures/test-case-6_1024x10_e2e_raw_latency.png)
 
 </div>
 
@@ -1107,7 +1107,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test6_q_latency](figures/test-case-6_1024x10_e2e_q_latency.png)
+![test6_q_latency](./doc/figures/test-case-6_1024x10_e2e_q_latency.png)
 
 </div>
 
@@ -1177,7 +1177,7 @@ Here is a plot of the raw jitter measurements:
 
 <div style="text-align:center">
 
-![test7_raw_jitter](figures/test-case-7_1024x10_raw_latency.png)
+![test7_raw_jitter](./doc/figures/test-case-7_1024x10_raw_latency.png)
 
 </div>
 
@@ -1185,7 +1185,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test6_q_jitter](figures/test-case-7_1024x10_q_latency.png)
+![test6_q_jitter](./doc/figures/test-case-7_1024x10_q_latency.png)
 
 </div>
 
@@ -1238,7 +1238,7 @@ Raw E2E jitter:
 
 <div style="text-align:center">
 
-![test7_raw_latency](figures/test-case-7_1024x10_e2e_raw_latency.png)
+![test7_raw_latency](./doc/figures/test-case-7_1024x10_e2e_raw_latency.png)
 
 </div>
 
@@ -1246,7 +1246,7 @@ Here is the quantile plot:
 
 <div style="text-align:center">
 
-![test7_q_latency](figures/test-case-7_1024x10_e2e_q_latency.png)
+![test7_q_latency](./doc/figures/test-case-7_1024x10_e2e_q_latency.png)
 
 </div>
 
