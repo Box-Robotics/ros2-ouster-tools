@@ -87,10 +87,11 @@ package.
 
 Since much of the analysis shown below relies upon consistent timing, my
 computer and the LiDAR are time-synchronized using PTP as described
-[here](./ptp_tuning.md). You can see the type of clock sync performance I am
+[here](../../ouster_ptp/). You can see the type of clock sync performance I am
 getting by looking at a set of representative notebooks. My PTP performance is
-shown [here](./notebooks/offset_from_master.ipynb) and the system clock sync
-performance is shown [here](./notebooks/sysclk.ipynb). I'll assert that the
+shown [here](../../ouster_ptp/doc/notebooks/offset_from_master.ipynb) and the
+system clock sync performance is shown
+[here](../../ouster_ptp/doc/notebooks/sysclk.ipynb). I'll assert that the
 system clock between the LiDAR and my computer are sub-millisecond and at worst
 single-digit millisecond synchronized.
 
@@ -109,9 +110,9 @@ net.core.rmem_default = 26214400
 # Analysis
 
 To collect data for our analysis, we will use the
-[perf_node](./perf_node.md). The `perf_node` acts as our ROS2
-application. Additionally, we need to run the ROS2 driver as the data source
-for `perf_node`.
+[perf_node](../include/ouster_perf/perf_node.hpp). The `perf_node` acts as our
+ROS2 application. Additionally, we need to run the ROS2 driver as the data
+source for `perf_node`.
 
 For this analysis, I am interested in quantifying both jitter and latency. In
 terms of jitter, we look at jitter in when the data are stamped (`msg_stamp`)
@@ -190,7 +191,7 @@ $ ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
 Start the application:
 
 ```
-$ ros2 run ouster_tools perf_node __log_level:=warn --ros-args -p n_samples:=1000
+$ ros2 run ouster_perf perf_node __log_level:=warn --ros-args -p n_samples:=1000
 ```
 
 Here is a plot of the raw jitter measurements:
@@ -881,13 +882,13 @@ ouster_driver:
 This time, to start the driver:
 
 ```
-$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_tools/etc/cyclonedds.xml ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
+$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_perf/etc/cyclonedds.xml ros2 launch ros2_ouster os1_launch.py params_file:=${HOME}/.params2/os1.yaml
 ```
 
 To start the `perf_node`:
 
 ```
-$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_tools/etc/cyclonedds.xml ros2 run ouster_tools perf_node  --ros-args --log-level WARN -p n_samples:=1000
+$ CYCLONEDDS_URI=file://${HOME}/dev2/ros2-ouster-tools/ouster_perf/etc/cyclonedds.xml ros2 run ouster_perf perf_node  --ros-args --log-level WARN -p n_samples:=1000
 ```
 
 **NOTE:** Be sure to point to wherever you have the `cyclonedds.xml` stored on
