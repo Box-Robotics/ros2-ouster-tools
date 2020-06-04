@@ -24,7 +24,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    this_package = "ouster_tools"
+    this_package = "ouster_perf"
     driver_package = "ros2_ouster"
 
     log_level = LaunchConfiguration("log_level")
@@ -60,8 +60,8 @@ def generate_launch_description():
           )
 
     perf_node = ComposableNode(
-        package="ouster_tools",
-        node_plugin="ouster_tools::PerfNode",
+        package="ouster_perf",
+        node_plugin="ouster_perf::PerfNode",
         node_namespace="/",
         node_name=perf_node_name,
         parameters=[perf_params]

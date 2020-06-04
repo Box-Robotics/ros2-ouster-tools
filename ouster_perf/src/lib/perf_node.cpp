@@ -1,4 +1,3 @@
-// -*- c++ -*-
 /*
  * Copyright (C) 2020 Box Robotics, Inc
  *
@@ -14,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__PERF_H_
-#define OUSTER_TOOLS__PERF_H_
 
-#include <ouster_tools/perf/perf_node.hpp>
+#include <ouster_perf/perf_node.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
-#endif // OUSTER_TOOLS__PERF_H_
+RCLCPP_COMPONENTS_REGISTER_NODE(ouster_perf::PerfNode)

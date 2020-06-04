@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ouster_tools)
+project(ouster_perf)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
@@ -23,35 +23,35 @@ set(node_plugins "")
 #############
 
 #-----------------------
-# libouster_tools_perf_component.so
+# libouster_perf_component.so
 #-----------------------
-add_library(${PROJECT_NAME}_perf_component SHARED
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/perf/perf_node.cpp
+add_library(${PROJECT_NAME}_component SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lib/perf_node.cpp
   )
 
-target_include_directories(${PROJECT_NAME}_perf_component
+target_include_directories(${PROJECT_NAME}_component
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
-target_compile_options(${PROJECT_NAME}_perf_component
+target_compile_options(${PROJECT_NAME}_component
   PRIVATE -Wall -Wextra
   )
 
-ament_target_dependencies(${PROJECT_NAME}_perf_component
+ament_target_dependencies(${PROJECT_NAME}_component
   rclcpp
   rclcpp_components
   sensor_msgs
   )
 
 rclcpp_components_register_nodes(
-  ${PROJECT_NAME}_perf_component "ouster_tools::PerfNode"
+  ${PROJECT_NAME}_component "ouster_perf::PerfNode"
   )
 set(node_plugins
-  "${node_plugins}ouster_tools::PerfNode;"
+  "${node_plugins}ouster_perf::PerfNode;"
   )
 set(node_plugins
-  "${node_plugins}$<TARGET_FILE:${PROJECT_NAME}_perf_component>\n"
+  "${node_plugins}$<TARGET_FILE:${PROJECT_NAME}_component>\n"
   )
 
 #-----------------------
@@ -93,7 +93,7 @@ ament_target_dependencies(${DRIVER_COMPONENT_MGR_EXE}
 
 install(
   TARGETS
-    ${PROJECT_NAME}_perf_component
+    ${PROJECT_NAME}_component
 
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

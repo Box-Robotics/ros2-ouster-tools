@@ -16,7 +16,7 @@
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>
-#include <ouster_tools/perf/perf_node.hpp>
+#include <ouster_perf/perf_node.hpp>
 
 int main(int argc, char ** argv)
 {
@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
   rclcpp::executors::MultiThreadedExecutor exec;
   rclcpp::NodeOptions options;
 
-  auto node = std::make_shared<ouster_tools::PerfNode>(options);
+  auto node = std::make_shared<ouster_perf::PerfNode>(options);
   exec.add_node(node->get_node_base_interface());
   exec.spin();
 

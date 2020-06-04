@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__UTIL_WAIT_FOR_RESULT_H_
-#define OUSTER_TOOLS__UTIL_WAIT_FOR_RESULT_H_
+#ifndef OUSTER_PERF__WAIT_FOR_RESULT_H_
+#define OUSTER_PERF__WAIT_FOR_RESULT_H_
 
 #include <chrono>
 #include <future>
 #include <rclcpp/rclcpp.hpp>
-#include <ouster_tools/visibility_control.h>
+#include <ouster_perf/visibility_control.h>
 
-namespace ouster_tools
+namespace ouster_perf
 {
   /**
    * Waits for a future to be ready with a maximum timeout duration.
@@ -38,7 +38,7 @@ namespace ouster_tools
    * @return The `future_status` of the `future`.
    */
   template<typename FutureT, typename TimeoutT>
-  OUSTER_TOOLS_PUBLIC std::future_status
+  OUSTER_PERF_PUBLIC std::future_status
   wait_for_result(FutureT& future, TimeoutT timeout)
   {
     auto end = std::chrono::steady_clock::now() + timeout;
@@ -62,6 +62,6 @@ namespace ouster_tools
     return status;
   }
 
-} // end: namespace ouster_tools
+} // end: namespace ouster_perf
 
-#endif // OUSTER_TOOLS__UTIL_WAIT_FOR_RESULT_H_
+#endif // OUSTER_PERF__WAIT_FOR_RESULT_H_

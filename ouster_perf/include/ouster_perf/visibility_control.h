@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef OUSTER_TOOLS__VISIBILITY_CONTROL_H_
-#define OUSTER_TOOLS__VISIBILITY_CONTROL_H_
+#ifndef OUSTER_PERF__VISIBILITY_CONTROL_H_
+#define OUSTER_PERF__VISIBILITY_CONTROL_H_
 
 #ifdef __cplusplus
 extern "C"
@@ -26,34 +26,34 @@ extern "C"
 
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef __GNUC__
-    #define OUSTER_TOOLS_EXPORT __attribute__ ((dllexport))
-    #define OUSTER_TOOLS_IMPORT __attribute__ ((dllimport))
+    #define OUSTER_PERF_EXPORT __attribute__ ((dllexport))
+    #define OUSTER_PERF_IMPORT __attribute__ ((dllimport))
   #else
-    #define OUSTER_TOOLS_EXPORT __declspec(dllexport)
-    #define OUSTER_TOOLS_IMPORT __declspec(dllimport)
+    #define OUSTER_PERF_EXPORT __declspec(dllexport)
+    #define OUSTER_PERF_IMPORT __declspec(dllimport)
   #endif
-  #ifdef OUSTER_TOOLS_BUILDING_DLL
-    #define OUSTER_TOOLS_PUBLIC OUSTER_TOOLS_EXPORT
+  #ifdef OUSTER_PERF_BUILDING_DLL
+    #define OUSTER_PERF_PUBLIC OUSTER_PERF_EXPORT
   #else
-    #define OUSTER_TOOLS_PUBLIC OUSTER_TOOLS_IMPORT
+    #define OUSTER_PERF_PUBLIC OUSTER_PERF_IMPORT
   #endif
-  #define OUSTER_TOOLS_PUBLIC_TYPE OUSTER_TOOLS_PUBLIC
-  #define OUSTER_TOOLS_LOCAL
+  #define OUSTER_PERF_PUBLIC_TYPE OUSTER_PERF_PUBLIC
+  #define OUSTER_PERF_LOCAL
 #else
-  #define OUSTER_TOOLS_EXPORT __attribute__ ((visibility("default")))
-  #define OUSTER_TOOLS_IMPORT
+  #define OUSTER_PERF_EXPORT __attribute__ ((visibility("default")))
+  #define OUSTER_PERF_IMPORT
   #if __GNUC__ >= 4
-    #define OUSTER_TOOLS_PUBLIC __attribute__ ((visibility("default")))
-    #define OUSTER_TOOLS_LOCAL  __attribute__ ((visibility("hidden")))
+    #define OUSTER_PERF_PUBLIC __attribute__ ((visibility("default")))
+    #define OUSTER_PERF_LOCAL  __attribute__ ((visibility("hidden")))
   #else
-    #define OUSTER_TOOLS_PUBLIC
-    #define OUSTER_TOOLS_LOCAL
+    #define OUSTER_PERF_PUBLIC
+    #define OUSTER_PERF_LOCAL
   #endif
-  #define OUSTER_TOOLS_PUBLIC_TYPE
+  #define OUSTER_PERF_PUBLIC_TYPE
 #endif
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // OUSTER_TOOLS__VISIBILITY_CONTROL_H_
+#endif  // OUSTER_PERF__VISIBILITY_CONTROL_H_

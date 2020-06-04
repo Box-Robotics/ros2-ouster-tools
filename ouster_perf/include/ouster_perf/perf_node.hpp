@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__PERF_PERF_NODE_H_
-#define OUSTER_TOOLS__PERF_PERF_NODE_H_
+#ifndef OUSTER_PERF__PERF_NODE_H_
+#define OUSTER_PERF__PERF_NODE_H_
 
 #include <atomic>
 #include <cstdint>
@@ -31,7 +31,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
-#include <ouster_tools/visibility_control.h>
+#include <ouster_perf/visibility_control.h>
 
 namespace
 {
@@ -45,12 +45,12 @@ namespace
   using ScanMsgPtr = std::shared_ptr<ScanMsg>;
 }
 
-namespace ouster_tools
+namespace ouster_perf
 {
   class PerfNode : public rclcpp::Node
   {
   public:
-    OUSTER_TOOLS_PUBLIC
+    OUSTER_PERF_PUBLIC
     explicit PerfNode(const rclcpp::NodeOptions& opts)
       : Node("perf_node", opts),
         log_(this->get_logger()),
@@ -163,6 +163,6 @@ namespace ouster_tools
     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
   }; // end: class PerfNode
 
-} // end: namespace ouster_tools
+} // end: namespace ouster_perf
 
-#endif // OUSTER_TOOLS__PERF_PERF_NODE_H_
+#endif // OUSTER_PERF__PERF_NODE_H_

@@ -1,4 +1,4 @@
-ouster_tools:
+ouster_perf:
   driver_component_manager:
     ros__parameters:
       #

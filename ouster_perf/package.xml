@@ -2,9 +2,11 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd"
             schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>ouster_tools</name>
+  <name>ouster_perf</name>
   <version>0.1.0</version>
-  <description>Tools and utilities for working with Ouster LiDARs</description>
+  <description>
+    Tools for analyzing and tuning the performance of Ouster LiDARs in ROS2
+  </description>
   <author email="tom@boxrobotics.ai">tpanzarella</author>
   <maintainer email="tom@boxrobotics.ai">Tom Panzarella</maintainer>
   <license>Apache License 2.0</license>

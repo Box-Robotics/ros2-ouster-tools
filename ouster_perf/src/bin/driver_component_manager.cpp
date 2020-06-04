@@ -29,7 +29,7 @@
 #include <rclcpp/parameter.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 
-#include <ouster_tools/util.hpp>
+#include <ouster_perf/wait_for_result.hpp>
 
 using TC_RETVAL =
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
@@ -172,7 +172,7 @@ public:
 
     auto timeout = std::chrono::milliseconds(this->timeout_millis_);
     auto future_status =
-      ouster_tools::wait_for_result(this->gs_future_result_, timeout);
+      ouster_perf::wait_for_result(this->gs_future_result_, timeout);
 
     if (future_status != std::future_status::ready)
       {
