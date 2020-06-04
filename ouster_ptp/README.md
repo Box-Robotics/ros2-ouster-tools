@@ -30,7 +30,7 @@ clocks). Synchronizing these distributed clocks is required for proper
 operation at a systems level. Ouster LiDARs natively support the [Precision
 Time Protocol (PTP)](https://en.wikipedia.org/wiki/Precision_Time_Protocol) for
 clock synchronization. Chapter 9 of the [Ouster Software
-Guide](../ouster_perf/ouster/software-user-guide-v1.13.0.pdf) provides a nice
+Guide](../ouster_perf/doc/ouster/software-user-guide-v1.13.0.pdf) provides a nice
 overview of synchronizing an Ouster LiDAR with a Linux host that will act as
 the PTP *grandmaster* clock. This guide builds on that document to help tune
 such a setup. It is expected that the reader of this document has followed the
