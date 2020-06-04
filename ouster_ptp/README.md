@@ -516,7 +516,7 @@ optional arguments:
   --hz HZ     Frequency to poll timestamps (default: 1)
   -1, --one   Poll once and exit (default: False)
 
-$ ros2 run ouster_tools sys-time --hz 2
+$ ros2 run ouster_ptp sys-time --hz 2
 {"system_time":"1587149800.866159678","lidar_time":"1587149800.864163160"}
 {"system_time":"1587149801.391718388","lidar_time":"1587149801.389585495"}
 {"system_time":"1587149801.916905642","lidar_time":"1587149801.914767981"}
