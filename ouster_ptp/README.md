@@ -1,10 +1,10 @@
-PTP Tuning
+ouster_ptp
 ==========
 
-This document covers synchronizing the LiDAR clock to your local `ptp4l`
-grandmaster clock using PTP. If you are using an external grandmaster, where
-your local system and the LiDAR are to act as slaves, then this is *not* the
-document for you.
+This package provides tools for synchronizing the LiDAR clock to your local
+`ptp4l` grandmaster clock using PTP. If you are using an external grandmaster,
+where your local system and the LiDAR are to act as slaves, then this is *not*
+the document for you.
 
 - [Introduction](#introduction)
 - [Identifying the HW Addresses](#identifying-the-hw-addresses)
@@ -19,7 +19,7 @@ it: `sudo apt install jq`. We now assume you have it.
 
 **NOTE:** We are not using `sudo` to run our `pmc` commands below. This is
 because we set up our `ptp4l` permissions per the post-installation
-instructions in our [README](../../README.md).
+instructions discussed [here](../README.md).
 
 
 # Introduction
@@ -30,17 +30,17 @@ clocks). Synchronizing these distributed clocks is required for proper
 operation at a systems level. Ouster LiDARs natively support the [Precision
 Time Protocol (PTP)](https://en.wikipedia.org/wiki/Precision_Time_Protocol) for
 clock synchronization. Chapter 9 of the [Ouster Software
-Guide](ouster/software-user-guide-v1.13.0.pdf) provides a nice overview of
-synchronizing an Ouster LiDAR with a Linux host that will act as the PTP
-*grandmaster* clock. This guide builds on that document to help tune such a
-setup. It is expected that the reader of this document has followed the Ouster
-guide and is now in the tuning phase.
+Guide](../ouster_perf/ouster/software-user-guide-v1.13.0.pdf) provides a nice
+overview of synchronizing an Ouster LiDAR with a Linux host that will act as
+the PTP *grandmaster* clock. This guide builds on that document to help tune
+such a setup. It is expected that the reader of this document has followed the
+Ouster guide and is now in the tuning phase.
 
 High-level overview of our exemplary clock architecture:
 
 <center>
 
-![clock_arch](figures/clock-arch-ptp.png)
+![clock_arch](doc/figures/clock-arch-ptp.png)
 
 </center>
 
@@ -388,10 +388,10 @@ Our first sample shows an offset of `-187200.0` and our second an offset of
 need a better way to measure and to understand how our system is behaving.
 
 To collect the data we need for our analysis, we will use the
-[pmc_node](./pmc_node.md). Right now we are only interested in looking at the
+[pmc_node](./doc/pmc_node.md). Right now we are only interested in looking at the
 `offsetFromMaster` and `meanPathDelay` so we will configure the `pmc_node` to
 only send `GET CURRENT_DATA_SET` at 1 Hz. The `pmc_node` is
-configured by editing the [pmc.yaml](../etc/pmc.yaml) file. You'll want to set
+configured by editing the [pmc.yaml](./etc/pmc.yaml) file. You'll want to set
 the `pmc_commands` parameter as follows:
 
 ```
@@ -402,14 +402,14 @@ Assuming you made the above change to the yaml file, you can now start the
 node with:
 
 ```
-$ ros2 launch ouster_tools pmc_managed.launch.py
+$ ros2 launch ouster_ptp pmc_managed.launch.py
 ```
 
 And you can check that the data are coming across as you expect by capturing
 one message like:
 
 ```
-$ ros2 run ouster_tools ptp-dump --pretty -1 2>/dev/null
+$ ros2 run ouster_ptp ptp-dump --pretty -1 2>/dev/null
 [
   {
     "GET CURRENT_DATA_SET": {
@@ -451,7 +451,7 @@ We will now use this same `ptp-dump` command to log 5 minutes of data
 to a file that we can use for offline analysis (optional).
 
 ```
-$ timeout -s INT 300s ros2 run ouster_tools ptp-dump 2>/dev/null | tee /tmp/ptp_json_log-00.txt
+$ timeout -s INT 300s ros2 run ouster_ptp ptp-dump 2>/dev/null | tee /tmp/ptp_json_log-00.txt
 [{"GET CURRENT_DATA_SET":{"send_stamp_ns":"1586610947564269927","ptp_msgs":[{"recv_stamp_ns":"1586610947564518608","ptp_header":{"sourcePortIdentity":"e86a64.fffe.f43c5b-0","sequenceId":"11","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"0","offsetFromMaster":"0.0","meanPathDelay":"0.0"}},{"recv_stamp_ns":"1586610947564772636","ptp_header":{"sourcePortIdentity":"bc0fa7.fffe.000792-1","sequenceId":"11","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"1","offsetFromMaster":"26050.0","meanPathDelay":"-2901.0"}}]}}]
 [{"GET CURRENT_DATA_SET":{"send_stamp_ns":"1586610948564207280","ptp_msgs":[{"recv_stamp_ns":"1586610948564571985","ptp_header":{"sourcePortIdentity":"e86a64.fffe.f43c5b-0","sequenceId":"12","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"0","offsetFromMaster":"0.0","meanPathDelay":"0.0"}},{"recv_stamp_ns":"1586610948564788188","ptp_header":{"sourcePortIdentity":"bc0fa7.fffe.000792-1","sequenceId":"12","action":"RESPONSE"},"current_data_set":{"stepsRemoved":"1","offsetFromMaster":"-98994.0","meanPathDelay":"16587.0"}}]}}]
 
@@ -475,11 +475,11 @@ that. We will live with only 299 samples.
 Plotting the `offsetFromMaster` over the entire 5 minute sampling period
 produces the following:
 
-![offset_from_master-00](figures/offset_from_master-00.png)
+![offset_from_master-00](./doc/figures/offset_from_master-00.png)
 
 Our assertion was correct, we are wildly oscillating around the `0`
 setpoint. The notebook used to produce the above plot is available
-[here](./notebooks/offset_from_master.ipynb).
+[here](./doc/notebooks/offset_from_master.ipynb).
 
 TODO: Still investigating how to get this resolved. May need work on Ouster
 side since it is the slave. Stay tuned...
@@ -492,7 +492,7 @@ synchronized to the LiDAR system time. We have automated that with the
 following command:
 
 ```
-$ ros2 run ouster_tools sys-time -1 | jq
+$ ros2 run ouster_ptp sys-time -1 | jq
 {
   "system_time": "1587149751.906000376",
   "lidar_time": "1587149751.904213667"
@@ -505,7 +505,7 @@ to get the Ouster data. We also note, you can run the `sys-time` script in a
 batch mode as well if you want to log these data over time. For example:
 
 ```
-$ ros2 run ouster_tools sys-time --help
+$ ros2 run ouster_ptp sys-time --help
 usage: sys-time [-h] [--ip IP] [--hz HZ] [-1]
 
 Compare the local system time to the LiDAR system time
@@ -528,7 +528,7 @@ $ ros2 run ouster_tools sys-time --hz 2
 
 A notebook looking at the synchronization of my local system clock to the Ouster system
 clock over a 5 minute period is available
-[here](./notebooks/sysclk.ipynb). Again, these data need to be considered a
+[here](./doc/notebooks/sysclk.ipynb). Again, these data need to be considered a
 *very rough* estimate as the method to acquire the times have a significant amount of
 latency built in (e.g., making an http request to the LiDAR, then the LiDAR
 needing to sample the time (and other stuff) then package up the results and
