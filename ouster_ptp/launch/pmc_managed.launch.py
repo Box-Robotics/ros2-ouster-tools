@@ -31,7 +31,7 @@ from launch_ros.event_handlers import OnStateTransition
 import lifecycle_msgs.msg
 
 def generate_launch_description():
-    package_name = 'ouster_tools'
+    package_name = 'ouster_ptp'
     node_namespace = LaunchConfiguration('__ns')
     node_name = LaunchConfiguration('__node')
     node_exe = 'pmc_node'
@@ -39,7 +39,7 @@ def generate_launch_description():
     params_file = LaunchConfiguration('__params')
 
     ns_declare = \
-      DeclareLaunchArgument('__ns', default_value='ouster_tools',
+      DeclareLaunchArgument('__ns', default_value='ouster_ptp',
                             description="Remap the node namespace")
     nn_declare = \
       DeclareLaunchArgument('__node', default_value='pmc_node',

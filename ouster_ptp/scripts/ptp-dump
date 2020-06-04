@@ -2,7 +2,7 @@
 # -*- python -*-
 
 import sys
-from ouster_tools.cmd import ptp_dump
+from ouster_ptp.cmd import ptp_dump
 
 if __name__ == '__main__':
     sys.exit(ptp_dump.main())
