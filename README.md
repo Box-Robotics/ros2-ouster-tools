@@ -1,8 +1,8 @@
 ros2-ouster-tools
 =================
-Tools and utilities for working with Ouster LiDARs. This package does *not*
-provide a driver but rather a set of tools and utilities to complement the
-[ROS2 Ouster Driver](https://github.com/SteveMacenski/ros2_ouster_drivers).
+Tools and utilities for working with Ouster LiDARs. This set of packages does
+*not* provide a driver but rather tools and utilities to complement
+the [ROS2 Ouster Driver](https://github.com/SteveMacenski/ros2_ouster_drivers).
 
 Tested Configurations
 =====================
@@ -23,40 +23,40 @@ Tested Configurations
   </tr>
 </table>
 
-NOTE: It is likely that this package supports a broader mix of hardware and
-software than is listed above. Above is what has been validated by the
-author(s).
-
+**NOTE:** In the transition from `Eloquent` to `Foxy` this project has been
+modularized into sub-packages. However, as of this writing, the `foxy-devel`
+branch is currently being tested against `Eloquent`. Once the author(s) migrate
+to `Foxy` testing will be done against that distribution and the table above
+will properly reflect this change. As of now, you can safely use the
+`foxy-devel` branch with `Eloquent`. Thanks for dealing with this confusion as
+we structurally reorganize this code and prepare it for LTS support in
+`Foxy`. Feel free to file an issue with any questions.
 
 What's Included?
 ================
 
-### Software
+### Packages
 
-- [DHCP Server](ouster_dhcp/README.md): A wrapper around `dnsmasq`
-  for giving the Ouster its IP address -- stable.
-- [PMC node](ouster_tools/doc/pmc_node.md): A ROS2 node for monitoring the PTP
-  time sync between the Linux host and the LiDAR -- stable.
-- [Lifecycle Component Manager](ouster_tools/doc/driver_component_manager.md):
-  A lifecycle manager for the LiDAR driver when being run in a component
-  container -- still under development.
-- [HDF5 Recorder](ouster_h5/README.md): A node to record Ouster topics to
-  H5 -- still under development.
+- [ouster_dhcp](ouster_dhcp/): Manage IP address allocation to Ouster LiDARs on
+  Linux.
+- [ouster_h5](ouster_h5/): Record Ouster LiDAR data to HDF5. The intention is
+  to support analysis. It is not intended to be a replacement for `rosbag`.
+- [ouster_perf](ouster_perf/): Performance analysis of using Ouster LiDARs
+  within ROS2.
+- [ouster_ptp](ouster_ptp/): PTP clock synchronization tools between ROS2 Linux
+  hosts and Ouster LiDARs.
 
-### Supplementary Documentation
-
-- [PTP tuning](ouster_tools/doc/ptp_tuning.md): Tools for synchronizing and
-  monitoring the synchronization of the LiDAR clock and your local system
-  clock.
-- [Performance analysis](ouster_tools/doc/perf.md): Tools and an approach
-  to quantitatively measure the performance of using Ouster LiDARs within
-  ROS2.
-
+This is (currently) no inter-dependencies between the above packages. If there
+is a piece of functionality you do not want, you can skip building a particular
+package by placing a `COLCON_IGNORE` file in the top-level directory of that
+package prior to building (see build instructions below).
 
 Building and Installing the Software
 ====================================
 
 ### Preliminaries
+
+#### ouster_dhcp
 
 If you want to use our provided DHCP server wrapper, you will need `dnsmasq` on
 your system:
@@ -65,6 +65,14 @@ your system:
 $ sudo apt install dnsmasq-base
 ```
 
+#### ouster_h5
+
+If you wish to use the HDF5 recording capabilities of this toolbox, you will
+need to first install [h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge).
+
+
+#### ouster_ptp
+
 If you want to use our PTP time syncing tools (or follow along with some of our
 docs on syncing the LiDAR to your system time) you will need the following:
 
@@ -72,15 +80,7 @@ docs on syncing the LiDAR to your system time) you will need the following:
 $ sudo apt install linuxptp chrony ethtool
 ```
 
-#### HDF5 Support
-
-If you wish to use the HDF5 recording capabilities of this toolbox, you will
-need to first install
-[h5_bridge](https://github.com/Box-Robotics/ros2-h5_bridge). If you would
-rather not use the `ouster_h5` package, you can use the `COLCON_IGNORE`
-approach to skip building that package.
-
-#### Cloning the sources
+### Cloning the sources
 
 To clone this repository, please use the following command -- there is a
 dependency on the `linuxptp` source as a submodule:
@@ -93,7 +93,7 @@ Optional, but **highly** recommended, we patch the `linuxptp` sources prior to
 building. Assuming you have just cloned this repo:
 
 ```
-$ cd ros2-ouster-tools/ouster_tools/
+$ cd ros2-ouster-tools/ouster_ptp/
 $ patch third_party/linuxptp/pmc_common.c pmc_common.c.patch
 patching file third_party/linuxptp/pmc_common.c
 Hunk #1 succeeded at 682 (offset 29 lines).
@@ -107,15 +107,26 @@ the `pmc` client as a shared object file that we then leverage via our
 
 ### Building with colcon
 
-This package should be built and installed using `colcon`.
-
-To build, assuming you have a colcon workspace set up:
+We use the following shell script to build and install the software via
+`colcon`.
 
 ```
-$ colcon build --event-handlers console_cohesion+
+#!/bin/bash
+
+colcon build \
+  --install-base "${BOX_ROS2}/ouster_tools" \
+  --cmake-args " -DCMAKE_BUILD_TYPE=Release" \
+  --event-handlers console_cohesion+
 ```
+
+**NOTE:** The `${BOX_ROS2}` environment variable is set prior to running this
+script and points to the root directory of where we install ROS2 packages on
+our system outside of a workspace. Modify as you see fit.
+
 
 ### Post-installation setup
+
+**NOTE:** This only applies if you have built the `ouster_ptp` package.
 
 The `pmc_node` provided with this package (for monitoring PTP time sync)
 assumes it is running on a machine that has a `ptp4l` daemon running
@@ -204,7 +215,7 @@ Please see the file called [LICENSE](LICENSE)
 
 <p align="center">
   <br/>
-  <img src="ouster_tools/doc/figures/box-logo.png"/>
+  <img src="ouster_perf/doc/figures/box-logo.png"/>
   <br/>
   Copyright &copy; 2020 Box Robotics, Inc.
 </p>
