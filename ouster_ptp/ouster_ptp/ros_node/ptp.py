@@ -21,9 +21,9 @@ from rclpy.qos import qos_profile_system_default
 from std_msgs.msg import String
 
 class PTPDump(Node):
-    """Subscriber to the /ouster_tools/ptp PMC topic"""
+    """Subscriber to the /ouster_ptp/ptp PMC topic"""
 
-    def __init__(self, topic="/ouster_tools/ptp", cb=None):
+    def __init__(self, topic="/ouster_ptp/ptp", cb=None):
         """
         ctor creates the node and subscribes to the passed in topic
 

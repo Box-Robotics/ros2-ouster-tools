@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__PTP_PMC_IMPL_H_
-#define OUSTER_TOOLS__PTP_PMC_IMPL_H_
+#ifndef OUSTER_PTP__PMC_IMPL_H_
+#define OUSTER_PTP__PMC_IMPL_H_
 
 #include <errno.h>
 #include <poll.h>
@@ -28,7 +28,7 @@
 #include <sstream>
 #include <string>
 
-#include <ouster_tools/ptp/err.hpp>
+#include <ouster_ptp/err.hpp>
 
 extern "C"
 {
@@ -45,7 +45,7 @@ using namespace std::chrono_literals;
 // Impl interface
 //-----------------------------
 
-namespace ouster_tools::ptp
+namespace ouster_ptp
 {
   class pmc::Impl
   {
@@ -69,7 +69,7 @@ namespace ouster_tools::ptp
 
   }; // end: class pmc::Impl
 
-} // end: namespace ouster_tools::ptp
+} // end: namespace ouster_ptp
 
 //-----------------------------
 // Impl implementation
@@ -81,30 +81,30 @@ namespace ouster_tools::ptp
 // not a utility library for working with Ouster LiDARs, this should be
 // generalized.
 //
-ouster_tools::ptp::pmc::Impl::Impl(
+ouster_ptp::pmc::Impl::Impl(
   int boundary_hops, const std::string& uds_prefix, int domain_number,
   int poll_timeout)
   : poll_tmo_(poll_timeout)
 {
 
-  print_set_progname("ouster_tools_pmc");
+  print_set_progname("ouster_ptp_pmc");
   print_set_syslog(1);
   print_set_verbose(1);
 
   this->cfg_ = config_create();
   if (! this->cfg_)
     {
-      throw ouster_tools::ptp::error_t(ouster_tools::ptp::LINUXPTP_CTOR_ERR);
+      throw ouster_ptp::error_t(ouster_ptp::LINUXPTP_CTOR_ERR);
     }
 
   if (config_set_int(this->cfg_, "network_transport", TRANS_UDS))
     {
-      throw ouster_tools::ptp::error_t(ouster_tools::ptp::LINUXPTP_CONFIG_ERR);
+      throw ouster_ptp::error_t(ouster_ptp::LINUXPTP_CONFIG_ERR);
     }
 
   if (config_set_int(this->cfg_, "domainNumber", domain_number))
     {
-      throw ouster_tools::ptp::error_t(ouster_tools::ptp::LINUXPTP_CONFIG_ERR);
+      throw ouster_ptp::error_t(ouster_ptp::LINUXPTP_CONFIG_ERR);
     }
 
   std::string iface_name(uds_prefix);
@@ -122,19 +122,19 @@ ouster_tools::ptp::pmc::Impl::Impl(
 
   if (! this->pmc_)
     {
-      throw ouster_tools::ptp::error_t(ouster_tools::ptp::LINUXPTP_CTOR_ERR);
+      throw ouster_ptp::error_t(ouster_ptp::LINUXPTP_CTOR_ERR);
     }
 
 }
 
-ouster_tools::ptp::pmc::Impl::~Impl()
+ouster_ptp::pmc::Impl::~Impl()
 {
   pmc_destroy(this->pmc_);
   config_destroy(this->cfg_);
 }
 
 std::string
-ouster_tools::ptp::pmc::Impl::do_command(const std::string& cmd)
+ouster_ptp::pmc::Impl::do_command(const std::string& cmd)
 {
   std::stringstream json_str;
   // stamping here b/c it makes the code cleaner. this will present a stamp
@@ -171,8 +171,8 @@ ouster_tools::ptp::pmc::Impl::do_command(const std::string& cmd)
             }
           else
             {
-              throw ouster_tools::ptp::error_t(
-                      ouster_tools::ptp::LINUXPTP_POLL_ERR);
+              throw ouster_ptp::error_t(
+                      ouster_ptp::LINUXPTP_POLL_ERR);
             }
         }
       else if (! cnt)
@@ -185,8 +185,8 @@ ouster_tools::ptp::pmc::Impl::do_command(const std::string& cmd)
         {
           if (pmc_do_command(this->pmc_, const_cast<char*>(cmd.c_str())))
             {
-              throw ouster_tools::ptp::error_t(
-                      ouster_tools::ptp::LINUXPTP_CMDEXE_ERR);
+              throw ouster_ptp::error_t(
+                      ouster_ptp::LINUXPTP_CMDEXE_ERR);
             }
 
           // flag that we no longer need to write our command
@@ -225,7 +225,7 @@ ouster_tools::ptp::pmc::Impl::do_command(const std::string& cmd)
 }
 
 char*
-ouster_tools::ptp::pmc::Impl::text2str(struct PTPText *text)
+ouster_ptp::pmc::Impl::text2str(struct PTPText *text)
 {
   static struct static_ptp_text s;
   s.max_symbols = -1;
@@ -234,14 +234,14 @@ ouster_tools::ptp::pmc::Impl::text2str(struct PTPText *text)
 }
 
 char*
-ouster_tools::ptp::pmc::Impl::bin2str(Octet *data, int len)
+ouster_ptp::pmc::Impl::bin2str(Octet *data, int len)
 {
   static char buf[BIN_BUF_SIZE];
   return bin2str_impl(data, len, buf, sizeof(buf));
 }
 
 std::string
-ouster_tools::ptp::pmc::Impl::to_json(struct ptp_message *msg)
+ouster_ptp::pmc::Impl::to_json(struct ptp_message *msg)
 {
   std::stringstream json_str;
   //json_str << "{";
@@ -579,4 +579,4 @@ out:
   return json_str.str();
 }
 
-#endif // OUSTER_TOOLS__PTP_PMC_IMPL_H_
+#endif // OUSTER_PTP__PMC_IMPL_H_

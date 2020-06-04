@@ -14,46 +14,46 @@
  * limitations under the License.
  */
 
-#include <ouster_tools/ptp/err.hpp>
+#include <ouster_ptp/err.hpp>
 #include <cstring>
 
-const int ouster_tools::ptp::OK = 0;
-const int ouster_tools::ptp::LINUXPTP_ERR = -900000;
-const int ouster_tools::ptp::LINUXPTP_CTOR_ERR = -900001;
-const int ouster_tools::ptp::LINUXPTP_CONFIG_ERR = -900002;
-const int ouster_tools::ptp::LINUXPTP_POLL_ERR = -900003;
-const int ouster_tools::ptp::LINUXPTP_CMDEXE_ERR = -900004;
+const int ouster_ptp::OK = 0;
+const int ouster_ptp::LINUXPTP_ERR = -900000;
+const int ouster_ptp::LINUXPTP_CTOR_ERR = -900001;
+const int ouster_ptp::LINUXPTP_CONFIG_ERR = -900002;
+const int ouster_ptp::LINUXPTP_POLL_ERR = -900003;
+const int ouster_ptp::LINUXPTP_CMDEXE_ERR = -900004;
 
-const char *ouster_tools::ptp::strerror(int errnum)
+const char *ouster_ptp::strerror(int errnum)
 {
   switch (errnum)
     {
-    case ouster_tools::ptp::OK:
+    case ouster_ptp::OK:
       return "OK";
-    case ouster_tools::ptp::LINUXPTP_ERR:
+    case ouster_ptp::LINUXPTP_ERR:
       return "linuxptp: Generic error";
-    case ouster_tools::ptp::LINUXPTP_CTOR_ERR:
+    case ouster_ptp::LINUXPTP_CTOR_ERR:
       return "linuxptp: Construction or allocation error";
-    case ouster_tools::ptp::LINUXPTP_CONFIG_ERR:
+    case ouster_ptp::LINUXPTP_CONFIG_ERR:
       return "linuxptp: Configuration error";
-    case ouster_tools::ptp::LINUXPTP_POLL_ERR:
+    case ouster_ptp::LINUXPTP_POLL_ERR:
       return "linuxptp: poll failed";
-    case ouster_tools::ptp::LINUXPTP_CMDEXE_ERR:
+    case ouster_ptp::LINUXPTP_CMDEXE_ERR:
       return "linuxptp: Failed in pmc command execution";
     default:
       return ::strerror(errnum);
     }
 }
 
-ouster_tools::ptp::error_t::error_t(int errnum)
+ouster_ptp::error_t::error_t(int errnum)
   : std::exception(), errnum_(errnum) { }
 
-int ouster_tools::ptp::error_t::code() const noexcept
+int ouster_ptp::error_t::code() const noexcept
 {
   return this->errnum_;
 }
 
-const char *ouster_tools::ptp::error_t::what() const noexcept
+const char *ouster_ptp::error_t::what() const noexcept
 {
-  return ouster_tools::ptp::strerror(this->code());
+  return ouster_ptp::strerror(this->code());
 }

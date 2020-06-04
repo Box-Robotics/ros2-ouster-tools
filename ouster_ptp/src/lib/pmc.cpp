@@ -16,26 +16,26 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <ouster_tools/ptp/pmc.hpp>
+#include <ouster_ptp/pmc.hpp>
 #include <pmc_impl.hpp>
 
-ouster_tools::ptp::pmc::pmc(int boundary_hops,
-                            const std::string& uds_prefix,
-                            int domain_number,
-                            int poll_timeout)
-  : pImpl(new ouster_tools::ptp::pmc::Impl(
+ouster_ptp::pmc::pmc(int boundary_hops,
+                     const std::string& uds_prefix,
+                     int domain_number,
+                     int poll_timeout)
+  : pImpl(new ouster_ptp::pmc::Impl(
             boundary_hops, uds_prefix, domain_number, poll_timeout))
 { }
 
-ouster_tools::ptp::pmc::~pmc() = default;
+ouster_ptp::pmc::~pmc() = default;
 
-std::string ouster_tools::ptp::pmc::poll(const std::string& cmd)
+std::string ouster_ptp::pmc::poll(const std::string& cmd)
 {
   return this->pImpl->do_command(cmd);
 }
 
 std::string
-ouster_tools::ptp::pmc::poll(const std::vector<std::string>& cmd_vec)
+ouster_ptp::pmc::poll(const std::vector<std::string>& cmd_vec)
 {
   std::stringstream json_str;
   json_str << "[";

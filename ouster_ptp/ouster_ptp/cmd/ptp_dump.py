@@ -19,7 +19,7 @@ import json
 import sys
 
 import rclpy
-from ouster_tools.ros_node.ptp import PTPDump
+from ouster_ptp.ros_node.ptp import PTPDump
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -27,7 +27,7 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-t", "--topic", required=False,
-                        default="/ouster_tools/ptp", type=str,
+                        default="/ouster_ptp/ptp", type=str,
                         help="Topic to subscribe to")
     parser.add_argument("-p", "--pretty", required=False,
                         action='store_true', default=False,

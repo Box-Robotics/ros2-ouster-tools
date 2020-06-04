@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__PTP_ERR_H_
-#define OUSTER_TOOLS__PTP_ERR_H_
+#ifndef OUSTER_PTP__ERR_H_
+#define OUSTER_PTP__ERR_H_
 
 #include <exception>
-#include <ouster_tools/visibility_control.h>
+#include <ouster_ptp/visibility_control.h>
 
-namespace ouster_tools::ptp
+namespace ouster_ptp
 {
-  extern OUSTER_TOOLS_PUBLIC const int OK;
-  extern OUSTER_TOOLS_PUBLIC const int LINUXPTP_ERR;
-  extern OUSTER_TOOLS_PUBLIC const int LINUXPTP_CTOR_ERR;
-  extern OUSTER_TOOLS_PUBLIC const int LINUXPTP_CONFIG_ERR;
-  extern OUSTER_TOOLS_PUBLIC const int LINUXPTP_POLL_ERR;
-  extern OUSTER_TOOLS_PUBLIC const int LINUXPTP_CMDEXE_ERR;
+  extern OUSTER_PTP_PUBLIC const int OK;
+  extern OUSTER_PTP_PUBLIC const int LINUXPTP_ERR;
+  extern OUSTER_PTP_PUBLIC const int LINUXPTP_CTOR_ERR;
+  extern OUSTER_PTP_PUBLIC const int LINUXPTP_CONFIG_ERR;
+  extern OUSTER_PTP_PUBLIC const int LINUXPTP_POLL_ERR;
+  extern OUSTER_PTP_PUBLIC const int LINUXPTP_CMDEXE_ERR;
 
   /**
    * Human-readable stringification of an error code
@@ -40,7 +40,7 @@ namespace ouster_tools::ptp
   /**
    * Exception wrapper for error codes
    */
-  class OUSTER_TOOLS_PUBLIC error_t : public std::exception
+  class OUSTER_PTP_PUBLIC error_t : public std::exception
   {
   public:
     /**
@@ -63,6 +63,6 @@ namespace ouster_tools::ptp
 
   }; // end: class error_t
 
-} // end: namespace ouster_tools::ptp
+} // end: namespace ouster_ptp
 
-#endif // OUSTER_TOOLS__PTP_ERR_H_
+#endif // OUSTER_PTP__ERR_H_

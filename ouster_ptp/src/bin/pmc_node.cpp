@@ -26,7 +26,8 @@
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
 #include <std_msgs/msg/string.hpp>
 
-#include <ouster_tools/ptp.hpp>
+#include <ouster_ptp/err.hpp>
+#include <ouster_ptp/pmc.hpp>
 
 using JSON_PUB =
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>>;
@@ -59,7 +60,7 @@ public:
     RCLCPP_INFO(this->logger_, "node name: %s", this->get_name());
 
     this->declare_parameter("boundary_hops", 1);
-    this->declare_parameter("uds_prefix", "/var/tmp/ouster_tools_pmc.sock.");
+    this->declare_parameter("uds_prefix", "/var/tmp/ouster_pmc.sock.");
     this->declare_parameter("domain_number", 0);
     this->declare_parameter("poll_timeout", 100);
     this->declare_parameter("poll_period", 1.0f);
@@ -88,7 +89,7 @@ public:
                 this->get_current_state().label().c_str());
 
     this->pmc_ =
-      std::make_shared<ouster_tools::ptp::pmc>(
+      std::make_shared<ouster_ptp::pmc>(
         this->get_parameter("boundary_hops").get_value<int>(),
         this->get_parameter("uds_prefix").as_string(),
         this->get_parameter("domain_number").get_value<int>(),
@@ -135,7 +136,7 @@ public:
             msg->data = this->pmc_->poll(cmds);
             this->pub_->publish(std::move(msg));
           }
-        catch (const ouster_tools::ptp::error_t& ex)
+        catch (const ouster_ptp::error_t& ex)
           {
             RCLCPP_WARN(this->logger_, ex.what());
           }
@@ -231,7 +232,7 @@ private:
   rclcpp::Logger logger_;
   JSON_PUB pub_;
   std::shared_ptr<rclcpp::TimerBase> timer_;
-  ouster_tools::ptp::pmc::SharedPtr pmc_;
+  ouster_ptp::pmc::SharedPtr pmc_;
 
 }; // end: class PMCNode
 

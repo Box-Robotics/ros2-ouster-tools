@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef OUSTER_TOOLS__PTP_PMC_H_
-#define OUSTER_TOOLS__PTP_PMC_H_
+#ifndef OUSTER_PTP__PMC_H_
+#define OUSTER_PTP__PMC_H_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <ouster_tools/visibility_control.h>
+#include <ouster_ptp/visibility_control.h>
 
-namespace ouster_tools::ptp
+namespace ouster_ptp
 {
   /**
    * Wrapper over the Linux PTP management client
@@ -35,7 +35,7 @@ namespace ouster_tools::ptp
    * not a comprehensive C++ interface to PTP or PMC but serves a purpose for
    * time synchronizing a host machine and Ouster LiDARs.
    */
-  class OUSTER_TOOLS_PUBLIC pmc
+  class OUSTER_PTP_PUBLIC pmc
   {
   public:
     using Ptr = std::unique_ptr<pmc>;
@@ -91,6 +91,6 @@ namespace ouster_tools::ptp
 
   }; // end: class pmc
 
-} // end: namespace ouster_tools::ptp
+} // end: namespace ouster_ptp
 
-#endif // OUSTER_TOOLS__PTP_PMC_H_
+#endif // OUSTER_PTP__PMC_H_

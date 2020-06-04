@@ -1,4 +1,4 @@
-ouster_tools:
+ouster_ptp:
   pmc_node:
     ros__parameters:
       #
@@ -19,7 +19,7 @@ ouster_tools:
       #
       # Data type: str
       #
-      uds_prefix: "/var/tmp/ouster_tools_pmc.sock."
+      uds_prefix: "/var/tmp/ouster_pmc.sock."
 
       #
       # PTP domain number
