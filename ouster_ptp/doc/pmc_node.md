@@ -31,7 +31,7 @@ data for off-line batch processing for tuning the PTP syncing parameters.
   <tr>
     <td>~/uds_prefix</td>
     <td>string</td>
-    <td>/var/tmp/ouster_tools_pmc.sock.</td>
+    <td>/var/tmp/ouster_pmc.sock.</td>
     <td>
     File path prefix for our (client side) Unix Domain Socket
     for talking with the ptp4l server. Make sure you have permissions to
@@ -114,7 +114,7 @@ None.
 To launch the node:
 
 ```
-$ ros2 launch ouster_tools pmc_managed.launch.py
+$ ros2 launch ouster_ptp pmc_managed.launch.py
 ```
 
 ### Other tools
@@ -126,7 +126,7 @@ data being published by the `pmc_node`. The help for the command is shown
 below:
 
 ```
-$ ros2 run ouster_tools ptp-dump --help
+$ ros2 run ouster_ptp ptp-dump --help
 usage: ptp-dump [-h] [-t TOPIC] [-p] [-1]
 
 Dump the JSON being published by the pmc_node
@@ -146,7 +146,7 @@ information being published by the `pmc_node`:
 (NOTE: The output shown was acquired with an Ouster OS1-16 connected)
 
 ```
-$ ros2 run ouster_tools ptp-dump --pretty -1 2>/dev/null
+$ ros2 run ouster_ptp ptp-dump --pretty -1 2>/dev/null
 [
   {
     "GET CURRENT_DATA_SET": {

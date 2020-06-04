@@ -96,7 +96,7 @@ $ ip addr show dev enp0s31f6
 ```
 
 The OS1-16 has the IP address `192.168.0.254/24` as obtained from our
-[dhcp_server](dhcp_server.md). Let's check general connectivity with
+[dhcp_server](../ouster_dhcp/). Let's check general connectivity with
 `ping`. From our Linux host:
 
 ```
