@@ -74,6 +74,10 @@ ouster_ptp:
       # problems when working with the LiDAR). If you don't want to execute
       # this hook, simply comment out this parameter.
       #
+      # NOTE: The version of `ptp4l` shipped with Ubuntu 20.04 supports the
+      # `utc_offset` config parameter in `/etc/linuxptp/ptp4l.conf`. You can
+      # set that to `37` to achieve the same result as uncommenting this.
+      #
       # data type: string
       #
       # pmc_config_hook: >-

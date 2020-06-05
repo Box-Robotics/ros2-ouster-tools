@@ -242,6 +242,14 @@ sending: SET GRANDMASTER_SETTINGS_NP
 		timeSource              0xa0
 ```
 
+**NOTE:** As of the Ubuntu 20.04, the version of `ptp4l` that is shipped, the
+`/etc/linuxptp/ptp4l.conf` config file supports the `utc_offset` parameter. So,
+you can set it like the following and avoid having to issue the above command.
+
+```
+utc_offset              37
+```
+
 Validating the PTP Nodes
 ========================
 Let's now see how the PTP nodes are configured:
