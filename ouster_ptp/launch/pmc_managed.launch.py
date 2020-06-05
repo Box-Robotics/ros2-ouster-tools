@@ -60,9 +60,9 @@ def generate_launch_description():
     pmc_node = \
       LifecycleNode(
           package=package_name,
-          node_executable=node_exe,
-          node_namespace=node_namespace,
-          node_name=node_name,
+          executable=node_exe,
+          namespace=node_namespace,
+          name=node_name,
           output='screen',
           log_cmd=True,
           parameters=[params_file],
