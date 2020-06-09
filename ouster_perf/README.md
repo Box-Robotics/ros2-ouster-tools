@@ -21,7 +21,7 @@ What has been done so far?
 2. [Foxy Performance Analysis](): A new baseline against ROS2 Foxy needs to be
    conducted. This will pick up where the [Eloquent
    analysis](./doc/eloquent_perf.md) left off. (In progress)
-3. [Data organization](./notebooks/Ouster_Data_Layout.ipynb): In
+3. [Data organization](./doc/notebooks/Ouster_Data_Layout.ipynb): In
    [this](https://github.com/SteveMacenski/ros2_ouster_drivers/pull/46) PR
    conversation, it was alluded to that some performance hit is being taken
    by how the LiDAR data are organized in the memory buffers of the
