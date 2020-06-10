@@ -23,7 +23,7 @@ Tested Configurations
   </tr>
   <tr>
     <td>0.2.0</td>
-    <td>Ubuntu 18.04</td>
+    <td>Ubuntu 20.04</td>
     <td>Foxy</td>
     <td>OS1-16</td>
     <td>1.13.0</td>
