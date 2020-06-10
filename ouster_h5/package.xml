@@ -3,7 +3,7 @@
             schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ouster_h5</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <description>Record Ouster LiDAR data to HDF5</description>
   <author email="tom@boxrobotics.ai">tpanzarella</author>
   <maintainer email="tom@boxrobotics.ai">Tom Panzarella</maintainer>

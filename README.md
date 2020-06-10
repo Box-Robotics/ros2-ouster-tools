@@ -21,16 +21,14 @@ Tested Configurations
     <td>OS1-16</td>
     <td>1.13.0</td>
   </tr>
+  <tr>
+    <td>0.2.0</td>
+    <td>Ubuntu 18.04</td>
+    <td>Foxy</td>
+    <td>OS1-16</td>
+    <td>1.13.0</td>
+  </tr>
 </table>
-
-**NOTE:** In the transition from `Eloquent` to `Foxy` this project has been
-modularized into sub-packages. However, as of this writing, the `foxy-devel`
-branch is currently being tested against `Eloquent`. Once the author(s) migrate
-to `Foxy` testing will be done against that distribution and the table above
-will properly reflect this change. As of now, you can safely use the
-`foxy-devel` branch with `Eloquent`. Thanks for dealing with this confusion as
-we structurally reorganize this code and prepare it for LTS support in
-`Foxy`. Feel free to file an issue with any questions.
 
 What's Included?
 ================

@@ -1,3 +1,6 @@
+## 0.2.0
+
+
 ## This file has started tracking changes at 0.1.0
 
 * Major reorganization / modularization from `eloquent-devel`. Please report

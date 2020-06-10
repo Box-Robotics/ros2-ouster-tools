@@ -3,7 +3,7 @@
             schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ouster_perf</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <description>
     Tools for analyzing and tuning the performance of Ouster LiDARs in ROS2
   </description>

@@ -3,7 +3,7 @@
             schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ouster_ptp</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <description>Tools for working with the PTP time sync features of Ouster LiDARs</description>
   <author email="tom@boxrobotics.ai">tpanzarella</author>
   <maintainer email="tom@boxrobotics.ai">Tom Panzarella</maintainer>
