@@ -2,7 +2,8 @@ Ouster LiDAR Performance in ROS2 - Foxy
 =======================================
 This document builds on the work reported in the [Eloquent Performance
 Analysis](./eloquent_perf.md) document. It takes a quantitative look at the
-expected jitter and latency of using ROS2 Foxy with an Ouster OS1-16 LiDAR.
+expected jitter and latency of using ROS2 Foxy on Ubuntu 20.04 with an Ouster
+OS1-16 LiDAR.
 
 Much of the background material reported in the [Eloquent Performance
 Analysis](./eloquent_perf.md) document will not be repeated here. Please read
@@ -14,7 +15,7 @@ that document to understand the test setup and machine configuration.
 
 # Data Flow Model
 
-In the document, we are focused on measuring performance inside the
+In this document, we are focused on measuring performance inside the
 [ros2_ouster_driver](https://github.com/SteveMacenski/ros2_ouster_drivers) and
 the ROS2 software stack. To that end, our measurement points (unless otherwise
 specified) follow the data flow model pictured below.
