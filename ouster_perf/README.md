@@ -18,7 +18,7 @@ What has been done so far?
 1. [Eloquent Performance Analysis](./doc/eloquent_perf.md): Significant work
    was conducted to get a baseline sense of the jitter and latency we can
    expect when using Ouster LiDARs with ROS2. This was done in ROS2 eloquent.
-2. [Foxy Performance Analysis](): A new baseline against ROS2 Foxy needs to be
+2. [Foxy Performance Analysis](./doc/foxy_perf.md): A new baseline against ROS2 Foxy needs to be
    conducted. This will pick up where the [Eloquent
    analysis](./doc/eloquent_perf.md) left off. (In progress)
 3. [Data organization](./doc/notebooks/Ouster_Data_Layout.ipynb): In
