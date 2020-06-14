@@ -12,6 +12,7 @@ that document to understand the test setup and machine configuration.
 # Quick Links
 
 - [Test Case 1](#test-case-1): `1024x10`, `TIME_FROM_ROS_RECEPTION`
+- [Test Case 2](#test-case-2): `1024x10`, `TIME_FROM_ROS_RECEPTION`, row-major order
 
 # Data Flow Model
 
@@ -165,5 +166,143 @@ Summary statistics (milliseconds):
   <tr>
     <td>max</td>
     <td>30.226</td>
+  </tr>
+</table>
+
+## Test Case 2
+
+This is a duplicate of [Test Case 1](./foxy_perf.md#test-case-1) however, the
+driver has an additional software patch to order the PointCloud data in
+row-major order. This test case is being used to see how much of a performance
+hit we take organizing the data in this way.
+
+<table>
+  <tr>
+    <th>LiDAR Mode</th>
+    <th>Topic</th>
+  </tr>
+  <tr>
+    <th>1024x10</th>
+    <th>/points</th>
+  </tr>
+</table>
+
+### Jitter
+
+Raw jitter:
+
+<div style="text-align:center">
+
+![test2_raw_jitter](./figures/foxy-test-case-2_1024x10_raw_jitter.png)
+
+</div>
+
+Quantile plot:
+
+<div style="text-align:center">
+
+![test2_q_jitter](./figures/foxy-test-case-2_1024x10_q_jitter.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>recv_stamp</th>
+    <th>msg_stamp</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>999</td>
+    <td>999</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>99.991</td>
+    <td>100.000</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.219</td>
+    <td>0.101</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>100.006</td>
+    <td>100.000</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>1.626</td>
+    <td>0.258</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>92.275</td>
+    <td>95.364</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>115.926</td>
+    <td>104.354</td>
+  </tr>
+</table>
+
+
+### End-to-End Latency
+
+Raw:
+
+<div style="text-align:center">
+
+![test2_raw_e2e](./figures/foxy-test-case-2_1024x10_e2e_raw.png)
+
+</div>
+
+
+Quantile:
+
+<div style="text-align:center">
+
+![test2_q_e2e](./figures/foxy-test-case-2_1024x10_e2e_q.png)
+
+</div>
+
+Summary statistics (milliseconds):
+
+<table>
+  <tr>
+    <th>Statistic</th>
+    <th>End-to-end Latency</th>
+  </tr>
+  <tr>
+    <td>count</td>
+    <td>1000</td>
+  </tr>
+  <tr>
+    <td>median</td>
+    <td>9.839</td>
+  </tr>
+  <tr>
+    <td>mad</td>
+    <td>0.119</td>
+  </tr>
+  <tr>
+    <td>mean</td>
+    <td>9.779</td>
+  </tr>
+  <tr>
+    <td>std</td>
+    <td>1.222</td>
+  </tr>
+  <tr>
+    <td>min</td>
+    <td>2.351</td>
+  </tr>
+  <tr>
+    <td>max</td>
+    <td>20.574</td>
   </tr>
 </table>
