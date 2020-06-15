@@ -14,6 +14,7 @@ that document to understand the test setup and machine configuration.
 - [Test Case 1](#test-case-1): `1024x10`, `TIME_FROM_ROS_RECEPTION`
 - [Test Case 2](#test-case-2): `1024x10`, `TIME_FROM_ROS_RECEPTION`, row-major order
 - [Test Case 3](#test-case-3): `2048x10`, `TIME_FROM_ROS_RECEPTION`, row-major order
+- [Test Case 4](#test-case-4): `2048x10`, `TIME_FROM_ROS_RECEPTION`, row-major order, jumbo frames
 
 # Data Flow Model
 
